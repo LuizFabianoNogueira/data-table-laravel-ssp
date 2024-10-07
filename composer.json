@@ -1,0 +1,31 @@
+{
+    "name": "luizfabianonogueira/data-table-laravel-ssp",
+    "description": "Data Table using laravel and Server side process",
+    "keywords": ["data table", "laravel", "ssp", "server side process", "datatable", "data-table", "data-table-laravel-ssp",
+        "data-table-laravel", "data-table-ssp", "data-table-server-side-process", "data-table-server-side", "data-table-process"],
+    "type": "library",
+    "license": "LGPL-3.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "LuizFabianoNogueira\\DataTableLaravelSSP\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Luiz Fabianno Nogueira",
+            "email": "luizfabianonogueira@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=8.3",
+        "laravel/framework": ">=v10.0.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LuizFabianoNogueira\\DataTableLaravelSSP\\DataTableLaravelSSPServiceProvider"
+            ]
+        }
+    }
+}
