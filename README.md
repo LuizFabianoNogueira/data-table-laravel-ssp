@@ -150,8 +150,8 @@ $('#this-is-my-table').loadDataTableLaravel(config);
 ### Campos de configuração
 
 - **request: {... ...}**: Objeto que contem as informações necessárias para a requisição dos dados.
-    - - **url**: string - Url da rota que será utilizada para carregar os dados.
-    - - **method**: string - Método que será utilizado para carregar os dados. (default: GET) \
+    - - **request - url**: string - Url da rota que será utilizada para carregar os dados.
+    - - **request - method**: string - Método que será utilizado para carregar os dados. (default: GET) \
 ```javascript
 let config = {... 
     request:{
@@ -160,7 +160,7 @@ let config = {...
     },
 ...};
 ```
-- - **dynamicModel**: string - Nome da model que será utilizada para carregar os dados.
+- - **request - dynamicModel**: string - Nome da model que será utilizada para carregar os dados.
 Caso utilize o dynamicModel não é necessário passar a url e method.
 ```javascript
 let config = {... 
@@ -169,7 +169,7 @@ let config = {...
     },
 ...};
 ```
-- - **headers**: object - Cabeçalhos que serão enviados na requisição. (default: {})
+- - **request - headers**: object - Cabeçalhos que serão enviados na requisição. (default: {})
  ```javascript
     let config = {...
         request:{
@@ -180,7 +180,7 @@ let config = {...
         },
 ...};
 ```
-- - **params**: object - Parametros que serão enviados na requisição. (default: {})
+- - **request - params**: object - Parametros que serão enviados na requisição. (default: {})
 ```javascript
 let config = {...
     request:{
@@ -191,12 +191,13 @@ let config = {...
     },
 ...};
 ```
-  
 
 - **columns**: array - Array de objetos que contem as informações das colunas da tabela.
-- **search**: string - Texto que será utilizado para fazer a busca. (default: '')
-- **order**: object - Objeto que contem as informações de ordenação.
-   
+```javascript
+let config = {...
+    columns: [{... ...}]
+...};
+```   
 
 
 ### License: LGPL-3.0-or-later
