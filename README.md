@@ -156,8 +156,10 @@ $('#this-is-my-table').loadDataTableLaravel(config);
 let config = {... 
     request:{
         url: ' {{ route('users.index') }} ',
-        method: 'GET'
+        method: 'GET',
+        ...
     },
+    ...
 ...};
 ```
 - - **request - dynamicModel**: string - Nome da model que será utilizada para carregar os dados.
@@ -165,8 +167,10 @@ Caso utilize o dynamicModel não é necessário passar a url e method.
 ```javascript
 let config = {... 
     request:{
-        dynamicModel: 'App\\Models\\User'
+        dynamicModel: 'App\\Models\\User',
+        ...
     },
+    ...
 ...};
 ```
 - - **request - headers**: object - Cabeçalhos que serão enviados na requisição. (default: {})
@@ -175,9 +179,12 @@ let config = {...
         request:{
             headers: {
                 "Authorization": "Bearer token",
-                "Content-Type": "application/json"    
-            }
+                "Content-Type": "application/json",
+                ...    
+            },
+            ...
         },
+        ...
 ...};
 ```
 - - **request - params**: object - Parametros que serão enviados na requisição. (default: {})
@@ -186,9 +193,12 @@ let config = {...
     request:{
         params: {
             "param1": "value1",
-            "param2": "value2"    
-        }
+            "param2": "value2",
+            ...    
+        },
+        ...
     },
+    ...
 ...};
 ```
 
