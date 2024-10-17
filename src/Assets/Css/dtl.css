@@ -1,0 +1,51 @@
+/* Base table style */
+.table-dtl {
+    width: 100%;
+    margin-bottom: 1rem;
+    background-color: transparent;
+    border-collapse: collapse;
+}
+
+.table-dtl td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+}
+
+.table-dtl thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table-dtl tbody + tbody {
+    border-top: 2px solid #dee2e6;
+}
+
+/* Striped rows */
+.table-striped-dtl tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Hover effect */
+.table-hover-dtl tbody tr:hover {
+    color: #212529;
+    background-color: rgba(0, 0, 0, 0.075);
+}
+
+/* Table with borders */
+.table-bordered-dtl {
+    border: 1px solid #dee2e6;
+}
+
+.table-bordered-dtl th,
+.table-bordered-dtl td {
+    border: 1px solid #dee2e6;
+}
+
+/* Responsive table */
+.table-responsive-dtl {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
