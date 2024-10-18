@@ -3,6 +3,8 @@
 namespace LuizFabianoNogueira\DataTableLaravelSSP\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use LuizFabianoNogueira\DataTableLaravelSSP\Traits\DataTableLaravelSSPTrait;
+
 
 /**
  * Class SseNotify
@@ -14,19 +16,5 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Dtl extends Model
 {
-    public function scopeFilters($query)
-    {
-        return $query;
-    }
-
-    public function scopeOrder($query)
-    {
-        return $query;
-    }
-
-    public function scopeSearch($query)
-    {
-        return $query;
-    }
-
+    use DataTableLaravelSSPTrait;
 }

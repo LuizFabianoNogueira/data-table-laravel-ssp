@@ -32,23 +32,13 @@ class DtlController extends BaseController
         }
 
         try {
-
-           $objModel = new $model();
-
+            $objModel = new $model();
             $columns = $request->input('columns');
-            $order = $request->input('order');
-
-            $query = $objModel::query();
-
+            $query = $objModel::query()->dtlFilters()->dtlOrder()->dtlSearch();
             if (isset($columns) && is_array($columns)) {
                 $query->select($columns);
             }
-            if (isset($order) && is_array($order)) {
-                $query->orderBy($order);
-            }
-
             $data = $query->paginate(($request->input('per_page') > 0) ? $request->input('per_page') : 10);
-
             return response()->json($data);
         } catch (\Exception $e) {
             return response()->json([

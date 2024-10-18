@@ -16,19 +16,13 @@ if (typeof $ !== 'undefined') {
             countItems : config.columns.length,
             url : (config.request.url ?? "/dtl/list"),
             method : (config.request.method ?? 'GET'),
-            params : (config.params ?? null),
-
-            basicAuth : (config.basicAuth ?? false),
-            basicAuthCredentials : (config.basicAuthCredentials ?? null),
-
+            params : (config.request.params ?? null),
             columns : (config.columns ?? null),
-
             txtNoResult : (config.txtNoResult ?? 'Sem resultados'),
+            alias : (config.table.alias ?? null),
 
             searchBox : (config.searchBox ?? ''),
             dataParamsDefault : {  search : "" },
-            searchButton : (config.searchButton ?? 'buttonSearch'),
-            searchInput : (config.searchInput ?? 'txtSearch'),
 
             export : (config.export ?? false),
             exportTitle : (config.exportTitle ?? ''),
@@ -44,84 +38,106 @@ if (typeof $ !== 'undefined') {
             $(table).prop('class', 'table-dtl table-striped-dtl table-hover-dtl');
         }
 
-        if(configuration.searchBox !== '') {
+        if(configuration.searchBox) {
+            if(configuration.searchBox.show) {
 
-            let searchBox = $('#'+configuration.searchBox);
+                let searchBoxRow = document.createElement('div');
+                searchBoxRow.setAttribute('class', 'row p-1');
+                searchBoxRow.setAttribute('id', 'searchBoxRow');
 
-            $(searchBox).html('');
-            let inputSearch = document.createElement('input');
-            inputSearch.setAttribute('type', 'text');
-            inputSearch.setAttribute('id', configuration.searchInput);
-            inputSearch.setAttribute('name', configuration.searchInput);
-            inputSearch.setAttribute('class', 'form-control');
-            inputSearch.setAttribute('style', 'height: 20%;');
-            inputSearch.setAttribute('placeholder', 'Pesquisar');
-            let timer = null;
-            inputSearch.addEventListener('input', function(){
-                let chars = $(this).val();
-                clearTimeout(timer);
-                if(chars.length >= 3) {
-                    timer = setTimeout(function(){
-                        $(table).addContent(table, configuration)
-                    }, 1000);
-                }
-            });
-            $(searchBox).append(inputSearch);
+                let searchBoxTdL = document.createElement('div');
+                searchBoxTdL.setAttribute('id', 'searchBoxTdL');
+                searchBoxTdL.setAttribute('class', 'col-6 p-1');
+                let searchBoxTdR = document.createElement('div');
+                searchBoxTdR.setAttribute('id', 'searchBoxTdR');
+                searchBoxTdR.setAttribute('class', 'col-6 p-1');
 
-            let iconButtonSearch = document.createElement('i');
-            iconButtonSearch.setAttribute('class', 'fa fa-search');
+                searchBoxRow.append(searchBoxTdL)
+                searchBoxRow.append(searchBoxTdR)
 
-            let buttonSearch = document.createElement('button');
-            buttonSearch.setAttribute('type', 'button');
-            buttonSearch.setAttribute('id', configuration.searchButton);
-            buttonSearch.setAttribute('style', 'border-bottom-right-radius: 6px; border-top-right-radius: 6px; height: 2.5rem');
-            buttonSearch.setAttribute('class', 'btn-dark');
-            $(buttonSearch).append(iconButtonSearch);
+                $(table).before(searchBoxRow);
 
-            $(searchBox).append(buttonSearch);
+                if (!configuration.searchBox.searchInput.id) {
 
-            $(buttonSearch).on('click', function (event) {
-                event.preventDefault();
-                $(this).addContent(table, configuration);
-            });
+                    let searchBox = $('#searchBoxRow');
 
-            $(inputSearch).on('keyup', function (event) {
-                event.preventDefault();
-                if (event.which === 13) {
-                    $(this).addContent(table, configuration);
-                }
-            });
-
-        } else {
-            if (configuration.searchButton) {
-                $("#" + configuration.searchButton).unbind('click').on('click', function (event) {
-                    event.preventDefault();
-                    $(this).addContent(table, configuration);
-                });
-            }
-            if (configuration.searchInput) {
-                let searchInput = $("#" + configuration.searchInput);
-                let timer = null;
-                $(searchInput).unbind('click').on('keyup', function (event) {
-                    event.preventDefault();
-                    if (event.which === 13) {
-                        $(this).addContent(table, configuration);
-                    }
-                });
-                $(searchInput).on('keyup', function (event) {
-                    event.preventDefault();
-                    if (event.which === 13) {
-                        $(this).addContent(table, configuration);
-                    } else {
+                    $(searchBox).html('');
+                    let inputSearch = document.createElement('input');
+                    inputSearch.setAttribute('type', 'text');
+                    inputSearch.setAttribute('id', 'input-search-'+configuration.alias);
+                    inputSearch.setAttribute('name', 'input-search-'+configuration.alias);
+                    inputSearch.setAttribute('class', 'form-control');
+                    inputSearch.setAttribute('style', 'height: 20%;');
+                    inputSearch.setAttribute('placeholder', 'Pesquisar');
+                    let timer = null;
+                    inputSearch.addEventListener('input', function(){
                         let chars = $(this).val();
                         clearTimeout(timer);
-                        if (chars.length >= 3) {
-                            timer = setTimeout(function () {
+                        if(chars.length >= 3) {
+                            timer = setTimeout(function(){
                                 $(table).addContent(table, configuration)
                             }, 1000);
                         }
+                    });
+                    $(searchBox).append(inputSearch);
+
+                    let iconButtonSearch = document.createElement('i');
+                    iconButtonSearch.setAttribute('class', 'fa fa-search');
+
+                    let buttonSearch = document.createElement('button');
+                    buttonSearch.setAttribute('type', 'button');
+                    buttonSearch.setAttribute('id', 'button-search-'+configuration.alias);
+                    buttonSearch.setAttribute('style', 'border-bottom-right-radius: 6px; border-top-right-radius: 6px; height: 2.5rem');
+                    buttonSearch.setAttribute('class', 'btn-dark');
+                    $(buttonSearch).append(iconButtonSearch);
+
+                    $(searchBox).append(buttonSearch);
+
+                    $(buttonSearch).on('click', function (event) {
+                        event.preventDefault();
+                        $(this).addContent(table, configuration);
+                    });
+
+                    $(inputSearch).on('keyup', function (event) {
+                        event.preventDefault();
+                        if (event.which === 13) {
+                            $(this).addContent(table, configuration);
+                        }
+                    });
+
+                } else {
+
+                    if (configuration.searchBox.searchButton) {
+                        $("#" + configuration.searchButton).unbind('click').on('click', function (event) {
+                            event.preventDefault();
+                            $(this).addContent(table, configuration);
+                        });
                     }
-                });
+                    if (configuration.searchBox.searchInput.id) {
+                        let searchInput = $("#" + configuration.searchInput);
+                        let timer = null;
+                        $(searchInput).unbind('click').on('keyup', function (event) {
+                            event.preventDefault();
+                            if (event.which === 13) {
+                                $(this).addContent(table, configuration);
+                            }
+                        });
+                        $(searchInput).on('keyup', function (event) {
+                            event.preventDefault();
+                            if (event.which === 13) {
+                                $(this).addContent(table, configuration);
+                            } else {
+                                let chars = $(this).val();
+                                clearTimeout(timer);
+                                if (chars.length >= 3) {
+                                    timer = setTimeout(function () {
+                                        $(table).addContent(table, configuration)
+                                    }, 1000);
+                                }
+                            }
+                        });
+                    } else {}
+                }
             }
         }
 
@@ -145,26 +161,39 @@ if (typeof $ !== 'undefined') {
 
                 if (dataColumn.columnTitle) {
                     let title = document.createElement('span');
+                    let iconSize = 20;
 
-                    const iconSortPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                    iconSortPath.setAttribute("d", "M304 32H16A16 16 0 0 0 0 48v96a16 16 0 0 0 16 16h32a16 16 0 0 0 16-16v-32h56v304H80a16 16 0 0 0 -16 16v32a16 16 0 0 0 16 16h160a16 16 0 0 0 16-16v-32a16 16 0 0 0 -16-16h-40V112h56v32a16 16 0 0 0 16 16h32a16 16 0 0 0 16-16V48a16 16 0 0 0 -16-16zm256 336h-48V144h48c14.3 0 21.3-17.3 11.3-27.3l-80-80a16 16 0 0 0 -22.6 0l-80 80C379.4 126 384.4 144 400 144h48v224h-48c-14.3 0-21.3 17.3-11.3 27.3l80 80a16 16 0 0 0 22.6 0l80-80C580.6 386 575.6 368 560 368z");
+
+                    const iconSortPath1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    iconSortPath1.setAttribute("d", "M16 18L16 6M16 6L20 10.125M16 6L12 10.125");
+                    iconSortPath1.setAttribute("stroke", "#CECECE");
+                    iconSortPath1.setAttribute("stroke-width", "2");
+                    iconSortPath1.setAttribute("stroke-linecap", "round");
+                    iconSortPath1.setAttribute("stroke-linejoin", "round");
+                    const iconSortPath2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    iconSortPath2.setAttribute("d", "M8 6L8 18M8 18L12 13.875M8 18L4 13.875");
+                    iconSortPath2.setAttribute("stroke", "#CECECE");
+                    iconSortPath2.setAttribute("stroke-width", "2");
+                    iconSortPath2.setAttribute("stroke-linecap", "round");
+                    iconSortPath2.setAttribute("stroke-linejoin", "round");
                     const iconSort = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                    iconSort.setAttribute("viewBox", "0 0 576 512");
+                    iconSort.setAttribute("viewBox", "0 0 24 24");
                     iconSort.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-                    iconSort.setAttribute("width", "16");
-                    iconSort.setAttribute("height", "16");
+                    iconSort.setAttribute("width", "24");
+                    iconSort.setAttribute("height", "24");
                     iconSort.setAttribute('class', 'fa-sort');
-                    iconSort.setAttribute('fill', '#CECECE');
+                    iconSort.setAttribute('fill', 'none');
                     iconSort.style.padding = '2px';
-                    iconSort.appendChild(iconSortPath);
+                    iconSort.appendChild(iconSortPath1);
+                    iconSort.appendChild(iconSortPath2);
 
                     let iconSortASCPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                    iconSortASCPath.setAttribute("d", "M176 352h-48V48a16 16 0 0 0 -16-16H80a16 16 0 0 0 -16 16v304H16c-14.2 0-21.4 17.2-11.3 27.3l80 96a16 16 0 0 0 22.6 0l80-96C197.4 369.3 190.2 352 176 352zm240-64H288a16 16 0 0 0 -16 16v32a16 16 0 0 0 16 16h56l-61.3 70.5A32 32 0 0 0 272 446.4V464a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0 -16-16h-56l61.3-70.5A32 32 0 0 0 432 321.6V304a16 16 0 0 0 -16-16zm31.1-85.4l-59.3-160A16 16 0 0 0 372.7 32h-41.4a16 16 0 0 0 -15.1 10.6l-59.3 160A16 16 0 0 0 272 224h24.8a16 16 0 0 0 15.2-11.1l4.4-12.9h71l4.4 12.9A16 16 0 0 0 407.2 224H432a16 16 0 0 0 15.1-21.4zM335.6 144L352 96l16.4 48z");
+                    iconSortASCPath.setAttribute("d", "M16 160h48v304a16 16 0 0 0 16 16h32a16 16 0 0 0 16-16V160h48c14.2 0 21.4-17.2 11.3-27.3l-80-96a16 16 0 0 0 -22.6 0l-80 96C-5.4 142.7 1.8 160 16 160zm272 64h128a16 16 0 0 0 16-16v-32a16 16 0 0 0 -16-16h-56l61.3-70.5A32 32 0 0 0 432 65.6V48a16 16 0 0 0 -16-16H288a16 16 0 0 0 -16 16v32a16 16 0 0 0 16 16h56l-61.3 70.5A32 32 0 0 0 272 190.4V208a16 16 0 0 0 16 16zm159.1 234.6l-59.3-160A16 16 0 0 0 372.7 288h-41.4a16 16 0 0 0 -15.1 10.6l-59.3 160A16 16 0 0 0 272 480h24.8a16 16 0 0 0 15.2-11.1l4.4-12.9h71l4.4 12.9A16 16 0 0 0 407.2 480H432a16 16 0 0 0 15.1-21.4zM335.6 400L352 352l16.4 48z");
                     let iconSortASC = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                     iconSortASC.setAttribute("viewBox", "0 0 448 512");
                     iconSortASC.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-                    iconSortASC.setAttribute("width", "16");
-                    iconSortASC.setAttribute("height", "16");
+                    iconSortASC.setAttribute("width", iconSize);
+                    iconSortASC.setAttribute("height", iconSize);
                     iconSortASC.setAttribute('class', 'fa-arrow-up');
                     iconSortASC.setAttribute('fill', '#666666');
                     iconSortASC.style.display = 'none';
@@ -172,12 +201,12 @@ if (typeof $ !== 'undefined') {
                     iconSortASC.appendChild(iconSortASCPath);
 
                     let iconSortDESCPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                    iconSortDESCPath.setAttribute("d", "M16 160h48v304a16 16 0 0 0 16 16h32a16 16 0 0 0 16-16V160h48c14.2 0 21.4-17.2 11.3-27.3l-80-96a16 16 0 0 0 -22.6 0l-80 96C-5.4 142.7 1.8 160 16 160zm272 64h128a16 16 0 0 0 16-16v-32a16 16 0 0 0 -16-16h-56l61.3-70.5A32 32 0 0 0 432 65.6V48a16 16 0 0 0 -16-16H288a16 16 0 0 0 -16 16v32a16 16 0 0 0 16 16h56l-61.3 70.5A32 32 0 0 0 272 190.4V208a16 16 0 0 0 16 16zm159.1 234.6l-59.3-160A16 16 0 0 0 372.7 288h-41.4a16 16 0 0 0 -15.1 10.6l-59.3 160A16 16 0 0 0 272 480h24.8a16 16 0 0 0 15.2-11.1l4.4-12.9h71l4.4 12.9A16 16 0 0 0 407.2 480H432a16 16 0 0 0 15.1-21.4zM335.6 400L352 352l16.4 48z");
+                    iconSortDESCPath.setAttribute("d", "M176 352h-48V48a16 16 0 0 0 -16-16H80a16 16 0 0 0 -16 16v304H16c-14.2 0-21.4 17.2-11.3 27.3l80 96a16 16 0 0 0 22.6 0l80-96C197.4 369.3 190.2 352 176 352zm240-64H288a16 16 0 0 0 -16 16v32a16 16 0 0 0 16 16h56l-61.3 70.5A32 32 0 0 0 272 446.4V464a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0 -16-16h-56l61.3-70.5A32 32 0 0 0 432 321.6V304a16 16 0 0 0 -16-16zm31.1-85.4l-59.3-160A16 16 0 0 0 372.7 32h-41.4a16 16 0 0 0 -15.1 10.6l-59.3 160A16 16 0 0 0 272 224h24.8a16 16 0 0 0 15.2-11.1l4.4-12.9h71l4.4 12.9A16 16 0 0 0 407.2 224H432a16 16 0 0 0 15.1-21.4zM335.6 144L352 96l16.4 48z");
                     let iconSortDESC = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                     iconSortDESC.setAttribute("viewBox", "0 0 448 512");
                     iconSortDESC.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-                    iconSortDESC.setAttribute("width", "16");
-                    iconSortDESC.setAttribute("height", "16");
+                    iconSortDESC.setAttribute("width", iconSize);
+                    iconSortDESC.setAttribute("height", iconSize);
                     iconSortDESC.setAttribute('class', 'fa-arrow-down');
                     iconSortDESC.setAttribute('fill', '#666666');
                     iconSortDESC.style.display = 'none';
@@ -200,26 +229,26 @@ if (typeof $ !== 'undefined') {
 
                         btnSort.onclick = function () {
                             $(".fa-sort").each(function (index, element) {
-                                $(element).fadeIn('fast');
+                                $(element).show('fast');
                             });
-                            $(iconSort).fadeOut('fast');
+                            $(iconSort).hide('fast');
                             $(".fa-arrow-up").each(function (index, element) {
-                                $(element).fadeOut('fast');
+                                $(element).hide('fast');
                             });
                             $(".fa-arrow-down").each(function (index, element) {
-                                $(element).fadeOut('fast');
+                                $(element).hide('fast');
                             });
                             let sortDirection = sessionStorage.getItem('sort.' + dataColumn.name);
                             if (!sortDirection) {
                                 sortDirection = 'ASC';
                                 sessionStorage.setItem('sort.' + dataColumn.name, 'ASC');
-                                $(iconSortASC).fadeIn('fast');
+                                $(iconSortASC).show('fast');
                             } else if (sortDirection === 'ASC') {
                                 sessionStorage.setItem('sort.' + dataColumn.name, 'DESC');
-                                $(iconSortDESC).fadeIn('fast');
+                                $(iconSortDESC).show('fast');
                             } else if (sortDirection === 'DESC') {
                                 sessionStorage.setItem('sort.' + dataColumn.name, 'ASC');
-                                $(iconSortASC).fadeIn('fast');
+                                $(iconSortASC).show('fast');
                             }
                             sessionStorage.setItem('dataTableSortColumn', dataColumn.columnSort);
                             sessionStorage.setItem('dataTableSortDirection', sortDirection);
@@ -280,8 +309,10 @@ if (typeof $ !== 'undefined') {
         $(this).addLoading(table, configuration.countItems, configuration);
         let TFOOT = document.createElement('tfoot');
 
-        if(configuration.searchInput){
-            configuration.dataParamsDefault.search = $("#"+configuration.searchInput).val();
+        if (configuration.searchBox.searchInput.id){
+            configuration.dataParamsDefault.search = $("#"+configuration.searchBox.searchInput.id).val();
+        } else {
+            configuration.dataParamsDefault.search = $("#input-search-"+configuration.alias).val();
         }
 
         let dataParams = Object.assign(configuration.dataParamsDefault, configuration.params)

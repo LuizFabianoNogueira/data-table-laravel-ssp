@@ -20,10 +20,17 @@ composer require luizfabianonogueira/data-table-laravel-ssp
 
 ## Configuration
 
-You can publish the config file with:
-```bash
-php artisan vendor:publish --tag="data-table-laravel-ssp-js"
+In the main layout include the js file
+```html
+<script src="{{ route('dtl.js') }}"></script>
 ```
+
+You can include the css file or use your css
+```html
+<link href="{{ route('dtl.css') }}" rel="stylesheet" type="text/css" />
+```
+
+Note that when adding the css and js file, a route was defined to fetch the file. This route is created by the DataTableLaravel
 
 In bootstrp/app.php add the following line:
 ```php
@@ -36,13 +43,19 @@ return [
 ];
 ```
 
-## Usage
+In your model add the following trait:
+```php
+use LuizFabianoNogueira\DataTableLaravelSSP\Traits\DataTableLaravelSSP;
 
-In yuor blade file add the following code:
-
-```html
-<script src="{{ asset('assets/js/dtl.js') }}"></script>
+class User extends Model
+{
+    use DataTableLaravelSSP;
+    ...
+}
 ```
+
+
+## Usage
 
 for the dataTable to be loaded you need the following structure
 
@@ -86,20 +99,20 @@ Em sua controller adicione o seguinte código:
 
 public function listaDadosParaDataTable(Request $request): JsonResponse
     {
-        $list = Model::filters()
-            ->search()
+        $list = Model::ftlFilters()
+            ->dtlSearch()
+            ->dtlOrder()
             ->paginate(($request->paginate ?? 10));
         return response()->json($list);
     }
 ```
-Observe que utilizamos filters() search() que são scopes que devem ser criados em sua model para que seja possivel a filtragem dos dados. \
-Caso não queira utilizar esses scopes basta remover do código.
+Observe que utilizamos ftlFilters(), dtlSearch(), dtlOrder() e  que são scopes criado pela trait caso queira personalizar crie em sua model 
 
 Veja exemplos de scopes:
 
 Em sua model adicione o seguinte código:
 ```php
-    public function scopeFilters($eloquent)
+    public function scopeDtlFilters($eloquent)
     {
         $request = Request::toArray();
         if (!empty($request['id'])) {
@@ -110,18 +123,12 @@ Em sua model adicione o seguinte código:
             }
         }
 
-        if (!empty($request['name'])) {
-            $eloquent->where('additional.name', 'ilike', '%' . $request['name'] . '%');
-        }
-
-        if (!empty($request['description'])) {
-            $eloquent->where('additional.description', 'ilike', '%' . $request['description'] . '%');
-        }
+        ...
 
         return $eloquent;
     }
 
-    public function scopeSearch($eloquent)
+    public function scopeDtlSearch($eloquent)
     {
         $request = Request::toArray();
         if (isset($request['search']) && !empty($request['search'])){
@@ -131,6 +138,15 @@ Em sua model adicione o seguinte código:
                     ->orWhere('yourTable.collumn3', 'ILIKE', '%' . $request['search'] . '%')
                     ->orWhere('yourTable.collumn4', 'ILIKE', '%' . $request['search'] . '%');
             });
+        }
+        return $eloquent;
+    }
+
+    public function scopeDtlOrder($eloquent)
+    {
+        $request = Request::toArray();
+        if (isset($request['sort']) && !empty($request['sort'])) {
+            $eloquent->orderBy($request['sort'], $request['direction']??'ASC');
         }
         return $eloquent;
     }
@@ -207,7 +223,84 @@ let config = {...
 let config = {...
     columns: [{... ...}]
 ...};
-```   
+```  
+- **columns**: campos possíveis
+    - - **columnTitle**: string - Título da coluna.
+    - - **data**: informação que será exibido na coluna.  
+    Deve corresponder ao nome da coluna no seu resultado.
+    Caso seja objeto deve ser utilizado o ponto para acessar o valor. Ex: 'user.name' em *render*': 
+    - - **render**: function - Função que será utilizada para renderizar o conteúdo da coluna.
+    - - **hidden**: boolean - Indica se a coluna é visível. (default: true)
+    - - **columnSort**: string - Defini por qual coluna será ordenado.
+    - - **headerClass**: string - Classe que será aplicada no cabeçalho da coluna.
+    - - **class**: string - Classe que será aplicada na coluna.
+    - - **style**: string - Estilo que será aplicado na coluna.
+    - - **name**: string - Nome da coluna.(alias)
+
+```javascript
+let config = {
+    columns: [
+        {
+            data: 'id',
+            hidden: true,
+        },
+        {
+            columnTitle: 'Nome',
+            data: 'name',
+            columnSort: 'name',
+            headerClass: 'text-center',
+            class: 'text-center',
+            style: 'width: 100px',
+            name: 'nameAlias',
+            render: function (data) {
+                return '<span class="badge badge-green">'+data+'</span>';
+            }
+        }
+    ],
+    ...
+};
+```
+
+- **table**: configurações da tabela
+    - - **table - txtNoResult**: string - Mensagem que será exibida quando não houver registros. (default: 'Sem resultados')
+
+```javascript
+let config = {...
+    table:{
+        txtNoResult: 'Nenhum registro encontrado',
+        ...
+    },
+    ...
+...};
+```
+
+- **searchBox**: configurações da caixa de pesquisa
+    - - **show**: boolean - Indica se a caixa de pesquisa será exibida. (default: true)
+    - - **boxId**: string - Id da caixa de pesquisa.
+    - - **placeholder**: string - Texto que será exibido na caixa de pesquisa. (default: 'Pesquisar')
+    - - **class**: string - Classe que será aplicada na caixa de pesquisa.
+    - - **style**: string - Estilo que será aplicado na caixa de pesquisa.
+    - - **autoSearch**: boolean - Indica se a pesquisa será feita automaticamente. (default: true)
+    - 
+
+```javascript
+let config = {...
+    searchBox: {
+        show: true,
+        boxId: 'searchBox',
+        placeholder: 'Pesquisar',
+        class: 'form-control',
+        style: 'width: 200px',
+        autoSearch: true,
+        autoSearchDelay: 500,
+        autoSearchMinLength: 3
+        searchButton:
+        searchInput:
+        ...
+    },
+    ...
+...};
+```
 
 
 ### License: LGPL-3.0-or-later
