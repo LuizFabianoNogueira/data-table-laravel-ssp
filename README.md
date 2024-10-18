@@ -275,31 +275,40 @@ let config = {...
 ```
 
 - **searchBox**: configurações da caixa de pesquisa
-    - - **show**: boolean - Indica se a caixa de pesquisa será exibida. (default: true)
-    - - **boxId**: string - Id da caixa de pesquisa.
+    - - **show**: boolean - Indica se a caixa de pesquisa será exibida. [obrigatório].
+    - - **boxId**: string - Id da caixa de pesquisa. caso null o sistema irá criar um id automaticamente.
     - - **placeholder**: string - Texto que será exibido na caixa de pesquisa. (default: 'Pesquisar')
     - - **class**: string - Classe que será aplicada na caixa de pesquisa.
     - - **style**: string - Estilo que será aplicado na caixa de pesquisa.
     - - **autoSearch**: boolean - Indica se a pesquisa será feita automaticamente. (default: true)
-    - 
+    - - **autoSearchOnEnter**: boolean - Indica se a pesquisa será feita ao pressionar a tecla enter. (default: true)
+    - - **autoSearchDelay**: number - Tempo de espera para realizar a pesquisa. (default: 500)
+    - - **autoSearchMinLength**: number - Quantidade mínima de caracteres para realizar a pesquisa. (default: 3)
+    - - **searchInput**: object - Configurações da caixa de pesquisa.
+        - - **searchInput - id**: boolean - Indica se a caixa de pesquisa terá um id. (default: false)
+        - - **searchInput - class**: string - Classe que será aplicada na caixa de pesquisa.
+        - - **searchInput - style**: string - Estilo que será aplicado na caixa de pesquisa.
+
 
 ```javascript
 let config = {...
     searchBox: {
         show: true,
-        boxId: 'searchBox',
-        placeholder: 'Pesquisar',
+        boxId:null,
+        placeholder: 'Pesquisa rapida',
         class: 'form-control',
         style: 'width: 200px',
         autoSearch: true,
+        autoSearchOnEnter:true,
         autoSearchDelay: 500,
-        autoSearchMinLength: 3
-        searchButton:
-        searchInput:
-        ...
-    },
-    ...
-...};
+        autoSearchMinLength: 3,
+        searchInput:{
+            id: false,
+            class: 'form-control',
+            style: 'max-width: 200px;'
+        }
+    }
+};
 ```
 
 

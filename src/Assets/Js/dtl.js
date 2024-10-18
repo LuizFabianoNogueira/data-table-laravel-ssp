@@ -18,7 +18,7 @@ if (typeof $ !== 'undefined') {
             method : (config.request.method ?? 'GET'),
             params : (config.request.params ?? null),
             columns : (config.columns ?? null),
-            txtNoResult : (config.txtNoResult ?? 'Sem resultados'),
+            txtNoResult : (config.table.txtNoResult ?? 'Sem resultados'),
             alias : (config.table.alias ?? null),
 
             searchBox : (config.searchBox ?? ''),
@@ -43,14 +43,15 @@ if (typeof $ !== 'undefined') {
 
                 let searchBoxRow = document.createElement('div');
                 searchBoxRow.setAttribute('class', 'row p-1');
-                searchBoxRow.setAttribute('id', 'searchBoxRow');
+                searchBoxRow.setAttribute('id', 'search-box-row-'+configuration.alias);
 
                 let searchBoxTdL = document.createElement('div');
-                searchBoxTdL.setAttribute('id', 'searchBoxTdL');
+                searchBoxTdL.setAttribute('id', 'search-box-tdl-'+configuration.alias);
                 searchBoxTdL.setAttribute('class', 'col-6 p-1');
                 let searchBoxTdR = document.createElement('div');
-                searchBoxTdR.setAttribute('id', 'searchBoxTdR');
-                searchBoxTdR.setAttribute('class', 'col-6 p-1');
+                searchBoxTdR.setAttribute('id', 'search-box-tdr-'+configuration.alias);
+                searchBoxTdR.setAttribute('class', 'col-6 p-1 input-group');
+                searchBoxTdR.setAttribute('style', 'display: flex; justify-content: flex-end');
 
                 searchBoxRow.append(searchBoxTdL)
                 searchBoxRow.append(searchBoxTdR)
@@ -59,51 +60,78 @@ if (typeof $ !== 'undefined') {
 
                 if (!configuration.searchBox.searchInput.id) {
 
-                    let searchBox = $('#searchBoxRow');
+                    let searchBox = $('#search-box-tdr-' + configuration.alias);
+
+                    let spanL = document.createElement('span');
+                    spanL.setAttribute('class', 'input-group-text');
+
+                    const iconSpanLsvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    iconSpanLsvg.setAttribute("width", "24");
+                    iconSpanLsvg.setAttribute("height", "24");
+                    iconSpanLsvg.setAttribute("viewBox", "0 0 24 24");
+                    iconSpanLsvg.setAttribute("fill", "none");
+
+                    let iconSpanLPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    iconSpanLPath.setAttribute("d", "M5 4H17M5 8H13M5 12H9M5 16H8M5 20H11M16.4729 17.4525C17.046 16.8743 17.4 16.0785 17.4 15.2C17.4 13.4327 15.9673 12 14.2 12C12.4327 12 11 13.4327 11 15.2C11 16.9673 12.4327 18.4 14.2 18.4C15.0888 18.4 15.893 18.0376 16.4729 17.4525ZM16.4729 17.4525L19 20");
+                    iconSpanLPath.setAttribute("stroke", "#464455");
+                    iconSpanLPath.setAttribute("stroke-linecap", "round");
+                    iconSpanLPath.setAttribute("stroke-linejoin", "round");
+
+                    iconSpanLsvg.append(iconSpanLPath);
+                    spanL.append(iconSpanLsvg);
+
+                    let spanR = document.createElement('span');
+                    spanR.setAttribute('class', 'input-group-text');
+                    spanR.append('Pesquisar')
+
 
                     $(searchBox).html('');
                     let inputSearch = document.createElement('input');
                     inputSearch.setAttribute('type', 'text');
-                    inputSearch.setAttribute('id', 'input-search-'+configuration.alias);
-                    inputSearch.setAttribute('name', 'input-search-'+configuration.alias);
-                    inputSearch.setAttribute('class', 'form-control');
-                    inputSearch.setAttribute('style', 'height: 20%;');
-                    inputSearch.setAttribute('placeholder', 'Pesquisar');
+                    inputSearch.setAttribute('id', 'input-search-' + configuration.alias);
+                    inputSearch.setAttribute('name', 'input-search-' + configuration.alias);
+                    inputSearch.setAttribute('class', (configuration.searchBox.searchInput.class ?? 'form-control'));
+                    inputSearch.setAttribute('style', (configuration.searchBox.searchInput.style ?? ''));
+                    inputSearch.setAttribute('placeholder', (configuration.searchBox.placeholder ?? 'Search'));
                     let timer = null;
-                    inputSearch.addEventListener('input', function(){
+                    inputSearch.addEventListener('input', function () {
                         let chars = $(this).val();
                         clearTimeout(timer);
-                        if(chars.length >= 3) {
-                            timer = setTimeout(function(){
+                        if (chars.length >= (configuration.searchBox.autoSearchMinLength ?? 3)) {
+                            timer = setTimeout(function () {
                                 $(table).addContent(table, configuration)
-                            }, 1000);
+                            }, (configuration.searchBox.autoSearchDelay ?? 1000));
                         }
                     });
+                    $(searchBox).append(spanL);
                     $(searchBox).append(inputSearch);
+                    $(searchBox).append(spanR);
 
                     let iconButtonSearch = document.createElement('i');
                     iconButtonSearch.setAttribute('class', 'fa fa-search');
 
                     let buttonSearch = document.createElement('button');
                     buttonSearch.setAttribute('type', 'button');
-                    buttonSearch.setAttribute('id', 'button-search-'+configuration.alias);
+                    buttonSearch.setAttribute('id', 'button-search-' + configuration.alias);
                     buttonSearch.setAttribute('style', 'border-bottom-right-radius: 6px; border-top-right-radius: 6px; height: 2.5rem');
                     buttonSearch.setAttribute('class', 'btn-dark');
                     $(buttonSearch).append(iconButtonSearch);
 
-                    $(searchBox).append(buttonSearch);
+                    //$(searchBox).append(buttonSearch);
 
                     $(buttonSearch).on('click', function (event) {
                         event.preventDefault();
                         $(this).addContent(table, configuration);
                     });
 
-                    $(inputSearch).on('keyup', function (event) {
-                        event.preventDefault();
-                        if (event.which === 13) {
-                            $(this).addContent(table, configuration);
-                        }
-                    });
+                    if (configuration.searchBox.autoSearchOnEnter !== false) {
+                        $(inputSearch).on('keyup', function (event) {
+                            event.preventDefault();
+                            if (event.which === 13) {
+                                $(this).addContent(table, configuration);
+                            }
+                        });
+                    }
 
                 } else {
 

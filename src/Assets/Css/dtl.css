@@ -49,3 +49,27 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
+
+input::-webkit-input-placeholder {
+    color: #CECECE;
+}
+
+/* Mozilla Firefox */
+input::-moz-placeholder {
+    color: #CECECE;
+}
+
+/* Internet Explorer 10-11 */
+input:-ms-input-placeholder {
+    color: #CECECE;
+}
+
+/* Microsoft Edge */
+input::-ms-input-placeholder {
+    color: #CECECE;
+}
+
+input::placeholder {
+    color: #EEEEEE;
+    font-size: 12px;
+}
