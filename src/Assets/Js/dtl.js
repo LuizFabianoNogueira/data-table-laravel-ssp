@@ -11,6 +11,14 @@ if (typeof $ !== 'undefined') {
 }
 
 (function($) {
+
+    let link = document.createElement('link');
+    link.href = 'https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+
+    const dtlFont = "'Open Sans', sans-serif";
+
     $.fn.loadDataTableLaravel = function(config) {
         let configuration = {
             countItems : config.columns.length,
@@ -28,10 +36,11 @@ if (typeof $ !== 'undefined') {
             exportTitle : (config.exportTitle ?? ''),
 
             afterEvent : (config.afterEvent ?? null),
-            loadingData : (config.loadingData ?? 'https://cdn.dribbble.com/users/102591/screenshots/3015327/loading.gif'),
+            loadingData : (config.loadingData ?? 'data:image/gif;base64, '),
             dynamicModel : (config.request.dynamicModel ?? null),
 
             buttons:(config.buttons ?? null),
+            texts:(config.texts ?? null),
         };
         let table = $(this);
         if (config.table.tableClass) {
@@ -59,12 +68,13 @@ if (typeof $ !== 'undefined') {
                 let btnExportPDF = document.createElement('button');
                 btnExportPDF.setAttribute('class', 'btn btn-outline-secondary btn-sm m-2 p-1');
                 btnExportPDF.append($(this).iconPDF());
+
                 let btnExportExcel = document.createElement('button');
                 btnExportExcel.setAttribute('class', 'btn btn-outline-secondary btn-sm m-2 p-1');
                 btnExportExcel.append($(this).iconXLS());
 
                 if(configuration.buttons.buttonShowColumns.show === true) {
-                    searchBoxTdL.append($(this).buttonShowColumns(configuration.columns));
+                    searchBoxTdL.append($(this).buttonShowColumns(configuration));
                 }
                 if(configuration.buttons.buttonCSV.show === true) {
                     searchBoxTdL.append(btnExportCSV);
@@ -96,25 +106,25 @@ if (typeof $ !== 'undefined') {
                     let spanL = document.createElement('span');
                     spanL.setAttribute('class', 'input-group-text');
 
-                    let iconSpanLsvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                    iconSpanLsvg.setAttribute("width", "24");
-                    iconSpanLsvg.setAttribute("height", "24");
-                    iconSpanLsvg.setAttribute("viewBox", "0 0 24 24");
-                    iconSpanLsvg.setAttribute("fill", "none");
+                    spanL.append($(this).iconLBoxSearch());
 
-                    let iconSpanLPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                    iconSpanLPath.setAttribute("d", "M5 4H17M5 8H13M5 12H9M5 16H8M5 20H11M16.4729 17.4525C17.046 16.8743 17.4 16.0785 17.4 15.2C17.4 13.4327 15.9673 12 14.2 12C12.4327 12 11 13.4327 11 15.2C11 16.9673 12.4327 18.4 14.2 18.4C15.0888 18.4 15.893 18.0376 16.4729 17.4525ZM16.4729 17.4525L19 20");
-                    iconSpanLPath.setAttribute("stroke", "#464455");
-                    iconSpanLPath.setAttribute("stroke-linecap", "round");
-                    iconSpanLPath.setAttribute("stroke-linejoin", "round");
+                    let buttonSearch = document.createElement('button');
+                    buttonSearch.setAttribute('type', 'button');
+                    buttonSearch.setAttribute('id', 'button-search-' + configuration.alias);
+                    buttonSearch.setAttribute('style', 'border:none; background: none; box-shadow: none; outline: none; color: inherit; font: inherit; cursor: pointer;');
+                    buttonSearch.setAttribute('class', '');
+                    $(buttonSearch).append(configuration.texts.searchBox.buttonText?? 'Search');
 
-                    iconSpanLsvg.append(iconSpanLPath);
-                    spanL.append(iconSpanLsvg);
+                    $(buttonSearch).on('click', function (event) {
+                        event.preventDefault();
+                        $(this).addContent(table, configuration);
+                    });
 
                     let spanR = document.createElement('span');
                     spanR.setAttribute('class', 'input-group-text');
-                    spanR.append('Pesquisar')
-
+                    spanR.style.fontFamily = dtlFont;
+                    spanR.style.fontSize = '12px';
+                    spanR.append(buttonSearch);
 
                     $(searchBox).html('');
                     let inputSearch = document.createElement('input');
@@ -123,7 +133,7 @@ if (typeof $ !== 'undefined') {
                     inputSearch.setAttribute('name', 'input-search-' + configuration.alias);
                     inputSearch.setAttribute('class', (configuration.searchBox.searchInput.class ?? 'form-control'));
                     inputSearch.setAttribute('style', (configuration.searchBox.searchInput.style ?? ''));
-                    inputSearch.setAttribute('placeholder', (configuration.searchBox.placeholder ?? 'Search'));
+                    inputSearch.setAttribute('placeholder', (configuration.texts.searchBox.placeholder ?? 'Search'));
                     let timer = null;
                     inputSearch.addEventListener('input', function () {
                         let chars = $(this).val();
@@ -134,26 +144,14 @@ if (typeof $ !== 'undefined') {
                             }, (configuration.searchBox.autoSearchDelay ?? 1000));
                         }
                     });
-                    $(searchBox).append(spanL);
+
+                    if(configuration.searchBox.iconLeft.show === true) {
+                        $(searchBox).append(spanL);
+                    }
                     $(searchBox).append(inputSearch);
-                    $(searchBox).append(spanR);
-
-                    let iconButtonSearch = document.createElement('i');
-                    iconButtonSearch.setAttribute('class', 'fa fa-search');
-
-                    let buttonSearch = document.createElement('button');
-                    buttonSearch.setAttribute('type', 'button');
-                    buttonSearch.setAttribute('id', 'button-search-' + configuration.alias);
-                    buttonSearch.setAttribute('style', 'border-bottom-right-radius: 6px; border-top-right-radius: 6px; height: 2.5rem');
-                    buttonSearch.setAttribute('class', 'btn-dark');
-                    $(buttonSearch).append(iconButtonSearch);
-
-                    //$(searchBox).append(buttonSearch);
-
-                    $(buttonSearch).on('click', function (event) {
-                        event.preventDefault();
-                        $(this).addContent(table, configuration);
-                    });
+                    if(configuration.searchBox.buttonSearch.show === true) {
+                        $(searchBox).append(spanR);
+                    }
 
                     if (configuration.searchBox.autoSearchOnEnter !== false) {
                         $(inputSearch).on('keyup', function (event) {
@@ -215,67 +213,22 @@ if (typeof $ !== 'undefined') {
             if(dataColumn.hidden !== true) {
                 let th = document.createElement('th');
                 th.setAttribute('data-column', 'dtl-th-'+dataColumn.name);
+                th.style.fontFamily = dtlFont;
                 if (dataColumn.headerClass) {
                     th.setAttribute('class', dataColumn.headerClass);
                 }
 
                 if (dataColumn.columnTitle) {
                     let title = document.createElement('span');
-                    let iconSize = 20;
-
-
-                    const iconSortPath1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                    iconSortPath1.setAttribute("d", "M16 18L16 6M16 6L20 10.125M16 6L12 10.125");
-                    iconSortPath1.setAttribute("stroke", "#CECECE");
-                    iconSortPath1.setAttribute("stroke-width", "2");
-                    iconSortPath1.setAttribute("stroke-linecap", "round");
-                    iconSortPath1.setAttribute("stroke-linejoin", "round");
-                    const iconSortPath2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                    iconSortPath2.setAttribute("d", "M8 6L8 18M8 18L12 13.875M8 18L4 13.875");
-                    iconSortPath2.setAttribute("stroke", "#CECECE");
-                    iconSortPath2.setAttribute("stroke-width", "2");
-                    iconSortPath2.setAttribute("stroke-linecap", "round");
-                    iconSortPath2.setAttribute("stroke-linejoin", "round");
-                    const iconSort = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                    iconSort.setAttribute("viewBox", "0 0 24 24");
-                    iconSort.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-                    iconSort.setAttribute("width", "24");
-                    iconSort.setAttribute("height", "24");
-                    iconSort.setAttribute('class', 'fa-sort');
-                    iconSort.setAttribute('fill', 'none');
-                    iconSort.style.padding = '2px';
-                    iconSort.appendChild(iconSortPath1);
-                    iconSort.appendChild(iconSortPath2);
-
-                    let iconSortASCPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                    iconSortASCPath.setAttribute("d", "M16 160h48v304a16 16 0 0 0 16 16h32a16 16 0 0 0 16-16V160h48c14.2 0 21.4-17.2 11.3-27.3l-80-96a16 16 0 0 0 -22.6 0l-80 96C-5.4 142.7 1.8 160 16 160zm272 64h128a16 16 0 0 0 16-16v-32a16 16 0 0 0 -16-16h-56l61.3-70.5A32 32 0 0 0 432 65.6V48a16 16 0 0 0 -16-16H288a16 16 0 0 0 -16 16v32a16 16 0 0 0 16 16h56l-61.3 70.5A32 32 0 0 0 272 190.4V208a16 16 0 0 0 16 16zm159.1 234.6l-59.3-160A16 16 0 0 0 372.7 288h-41.4a16 16 0 0 0 -15.1 10.6l-59.3 160A16 16 0 0 0 272 480h24.8a16 16 0 0 0 15.2-11.1l4.4-12.9h71l4.4 12.9A16 16 0 0 0 407.2 480H432a16 16 0 0 0 15.1-21.4zM335.6 400L352 352l16.4 48z");
-                    let iconSortASC = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                    iconSortASC.setAttribute("viewBox", "0 0 448 512");
-                    iconSortASC.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-                    iconSortASC.setAttribute("width", iconSize);
-                    iconSortASC.setAttribute("height", iconSize);
-                    iconSortASC.setAttribute('class', 'fa-arrow-up');
-                    iconSortASC.setAttribute('fill', '#666666');
-                    iconSortASC.style.display = 'none';
-                    iconSortASC.style.padding = '2px';
-                    iconSortASC.appendChild(iconSortASCPath);
-
-                    let iconSortDESCPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                    iconSortDESCPath.setAttribute("d", "M176 352h-48V48a16 16 0 0 0 -16-16H80a16 16 0 0 0 -16 16v304H16c-14.2 0-21.4 17.2-11.3 27.3l80 96a16 16 0 0 0 22.6 0l80-96C197.4 369.3 190.2 352 176 352zm240-64H288a16 16 0 0 0 -16 16v32a16 16 0 0 0 16 16h56l-61.3 70.5A32 32 0 0 0 272 446.4V464a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0 -16-16h-56l61.3-70.5A32 32 0 0 0 432 321.6V304a16 16 0 0 0 -16-16zm31.1-85.4l-59.3-160A16 16 0 0 0 372.7 32h-41.4a16 16 0 0 0 -15.1 10.6l-59.3 160A16 16 0 0 0 272 224h24.8a16 16 0 0 0 15.2-11.1l4.4-12.9h71l4.4 12.9A16 16 0 0 0 407.2 224H432a16 16 0 0 0 15.1-21.4zM335.6 144L352 96l16.4 48z");
-                    let iconSortDESC = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                    iconSortDESC.setAttribute("viewBox", "0 0 448 512");
-                    iconSortDESC.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-                    iconSortDESC.setAttribute("width", iconSize);
-                    iconSortDESC.setAttribute("height", iconSize);
-                    iconSortDESC.setAttribute('class', 'fa-arrow-down');
-                    iconSortDESC.setAttribute('fill', '#666666');
-                    iconSortDESC.style.display = 'none';
-                    iconSortDESC.style.padding = '2px';
-                    iconSortDESC.appendChild(iconSortDESCPath);
 
                     title.style.cssText = 'color: #666666; font-size: 14px;';
                     $(title).html(dataColumn.columnTitle + ' ');
                     if (dataColumn.columnSort) {
+
+                        let iconSort = $(this).iconSort();
+                        let iconSortASC = $(this).iconSortASC();
+                        let iconSortDESC = $(this).iconSortDESC();
+
                         $(title).append(iconSort);
                         $(title).append(iconSortASC);
                         $(title).append(iconSortDESC);
@@ -441,6 +394,7 @@ if (typeof $ !== 'undefined') {
             if(dataColumn.hidden !== true) {
                 let td = document.createElement('td');
                 td.setAttribute('data-column', 'dtl-td-'+dataColumn.name);
+                td.style.fontFamily = dtlFont;
                 if (dataColumn.class) {
                     td.setAttribute('class', dataColumn.class);
                 }
@@ -518,7 +472,7 @@ if (typeof $ !== 'undefined') {
             $(this).addContent(table, configuration, dataPaginate.first_page_url);
         };
         btnFirstA.setAttribute('class', "page-link");
-        btnFirstA.append('Primeiro');
+        btnFirstA.append(configuration.texts.pagination.first??'Primeiro');
         btnFirstLi.append(btnFirstA);
         ul.append(btnFirstLi);
 
@@ -530,7 +484,7 @@ if (typeof $ !== 'undefined') {
             $(this).addContent(table, configuration, dataPaginate.prev_page_url);
         };
         btnPreviousA.setAttribute('class', "page-link");
-        btnPreviousA.append('Anterior');
+        btnPreviousA.append(configuration.texts.pagination.prev??'Anterior');
         btnPreviousLi.append(btnPreviousA);
         ul.append(btnPreviousLi);
 
@@ -566,7 +520,7 @@ if (typeof $ !== 'undefined') {
             $(this).addContent(table, configuration, dataPaginate.next_page_url);
         };
         btnNextA.setAttribute('class', "page-link");
-        btnNextA.append('Próxima');
+        btnNextA.append(configuration.texts.pagination.next??'Próxima');
         btnNextLi.append(btnNextA);
         ul.append(btnNextLi);
 
@@ -578,7 +532,7 @@ if (typeof $ !== 'undefined') {
             $(this).addContent(table, configuration, dataPaginate.last_page_url)
         };
         btnLastA.setAttribute('class', "page-link");
-        btnLastA.append('Última');
+        btnLastA.append(configuration.texts.pagination.last??'Última');
         btnLastLi.append(btnLastA);
         ul.append(btnLastLi);
 
@@ -615,7 +569,9 @@ if (typeof $ !== 'undefined') {
         th.colSpan = parseInt(configuration.countItems);
         th.style.cssText = 'color:#999; font-size:10px; border:none;';
 
-        let content = "Exibindo "+dataPaginate.countItems+" resgistro ("+dataPaginate.from+" ao "+dataPaginate.to+") de "+dataPaginate.total
+        let content = (configuration.texts.pagination.showing??"showing")+" "
+            +dataPaginate.countItems+ " "+(configuration.texts.pagination.records??"records")+" ("+
+            dataPaginate.from+" "+(configuration.texts.pagination.to??"to")+" "+dataPaginate.to+") "+(configuration.texts.pagination.outOf??"out of")+" "+dataPaginate.total
         th.append(content);
         tr.append(th);
 
@@ -718,18 +674,20 @@ if (typeof $ !== 'undefined') {
         document.body.removeChild(form);
     };
 
-    $.fn.buttonShowColumns = function(COLUMNS){
+    $.fn.buttonShowColumns = function(configuration){
+        let COLUMNS = configuration.columns;
         let btnCools = document.createElement('button');
-        btnCools.setAttribute('class', 'btn btn-outline-secondary btn-sm m-2 p-1');
+        btnCools.setAttribute('class', 'btn btn-outline-secondary btn-sm ml-3 p-1');
         btnCools.append($(this).iconShowColumns());
 
         let divDropdownColumns = document.createElement('div');
         divDropdownColumns.setAttribute('id', 'divDropdownColumns');
         divDropdownColumns.setAttribute('class', 'dropdown-menu p-2');
+        divDropdownColumns.setAttribute('title', configuration.texts.buttonShowColumns.hoverText??'Hide Columns');
         divDropdownColumns.style.display = 'none';
         let title = document.createElement('h6');
         title.setAttribute('class', 'dropdown-header');
-        title.append('Ocultar Colunas');
+        title.append(configuration.texts.buttonShowColumns.title??'Hide Columns');
         divDropdownColumns.append(title);
         COLUMNS.forEach(function(dataColumn) {
             if(dataColumn.hidden !== true) {
@@ -783,14 +741,14 @@ if (typeof $ !== 'undefined') {
     };
 
     //--------------------------------- ICONS buttons---------------------------------
-    let iconSizeWidth = 48;
-    let iconSizeHeight = 48;
+    let iconSizeWidth = 24;
+    let iconSizeHeight = 24;
 
     $.fn.iconShowColumns = function(){
         const svgNS = "http://www.w3.org/2000/svg";  // Namespace SVG
         const svg = document.createElementNS(svgNS, "svg");
-        svg.setAttribute("height", iconSizeWidth+"px");
-        svg.setAttribute("width", iconSizeHeight+"px");
+        svg.setAttribute("height", "24px");
+        svg.setAttribute("width", "24px");
         svg.setAttribute("version", "1.1");
         svg.setAttribute("id", "Layer_1");
         svg.setAttribute("viewBox", "0 0 512 512");
@@ -930,4 +888,80 @@ if (typeof $ !== 'undefined') {
         svg.appendChild(g);
         return svg;
     };
+
+    $.fn.iconLBoxSearch = function(){
+        let iconSpanLsvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        iconSpanLsvg.setAttribute("width", "24");
+        iconSpanLsvg.setAttribute("height", "24");
+        iconSpanLsvg.setAttribute("viewBox", "0 0 24 24");
+        iconSpanLsvg.setAttribute("fill", "none");
+
+        let iconSpanLPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        iconSpanLPath.setAttribute("d", "M5 4H17M5 8H13M5 12H9M5 16H8M5 20H11M16.4729 17.4525C17.046 16.8743 17.4 16.0785 17.4 15.2C17.4 13.4327 15.9673 12 14.2 12C12.4327 12 11 13.4327 11 15.2C11 16.9673 12.4327 18.4 14.2 18.4C15.0888 18.4 15.893 18.0376 16.4729 17.4525ZM16.4729 17.4525L19 20");
+        iconSpanLPath.setAttribute("stroke", "#464455");
+        iconSpanLPath.setAttribute("stroke-linecap", "round");
+        iconSpanLPath.setAttribute("stroke-linejoin", "round");
+
+        iconSpanLsvg.append(iconSpanLPath);
+        return iconSpanLsvg;
+    };
+
+    $.fn.iconSort = function(){
+        const iconSortPath1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        iconSortPath1.setAttribute("d", "M16 18L16 6M16 6L20 10.125M16 6L12 10.125");
+        iconSortPath1.setAttribute("stroke", "#CECECE");
+        iconSortPath1.setAttribute("stroke-width", "2");
+        iconSortPath1.setAttribute("stroke-linecap", "round");
+        iconSortPath1.setAttribute("stroke-linejoin", "round");
+        const iconSortPath2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        iconSortPath2.setAttribute("d", "M8 6L8 18M8 18L12 13.875M8 18L4 13.875");
+        iconSortPath2.setAttribute("stroke", "#CECECE");
+        iconSortPath2.setAttribute("stroke-width", "2");
+        iconSortPath2.setAttribute("stroke-linecap", "round");
+        iconSortPath2.setAttribute("stroke-linejoin", "round");
+        const iconSort = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        iconSort.setAttribute("viewBox", "0 0 24 24");
+        iconSort.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        iconSort.setAttribute("width", "24");
+        iconSort.setAttribute("height", "24");
+        iconSort.setAttribute('class', 'fa-sort');
+        iconSort.setAttribute('fill', 'none');
+        iconSort.style.padding = '2px';
+        iconSort.appendChild(iconSortPath1);
+        iconSort.appendChild(iconSortPath2);
+        return iconSort;
+    };
+
+    $.fn.iconSortASC = function(){
+        let iconSortASCPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        iconSortASCPath.setAttribute("d", "M16 160h48v304a16 16 0 0 0 16 16h32a16 16 0 0 0 16-16V160h48c14.2 0 21.4-17.2 11.3-27.3l-80-96a16 16 0 0 0 -22.6 0l-80 96C-5.4 142.7 1.8 160 16 160zm272 64h128a16 16 0 0 0 16-16v-32a16 16 0 0 0 -16-16h-56l61.3-70.5A32 32 0 0 0 432 65.6V48a16 16 0 0 0 -16-16H288a16 16 0 0 0 -16 16v32a16 16 0 0 0 16 16h56l-61.3 70.5A32 32 0 0 0 272 190.4V208a16 16 0 0 0 16 16zm159.1 234.6l-59.3-160A16 16 0 0 0 372.7 288h-41.4a16 16 0 0 0 -15.1 10.6l-59.3 160A16 16 0 0 0 272 480h24.8a16 16 0 0 0 15.2-11.1l4.4-12.9h71l4.4 12.9A16 16 0 0 0 407.2 480H432a16 16 0 0 0 15.1-21.4zM335.6 400L352 352l16.4 48z");
+        let iconSortASC = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        iconSortASC.setAttribute("viewBox", "0 0 448 512");
+        iconSortASC.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        iconSortASC.setAttribute("width", "16px");
+        iconSortASC.setAttribute("height", "16px");
+        iconSortASC.setAttribute('class', 'fa-arrow-up');
+        iconSortASC.setAttribute('fill', '#666666');
+        iconSortASC.style.display = 'none';
+        iconSortASC.style.padding = '2px';
+        iconSortASC.appendChild(iconSortASCPath);
+        return iconSortASC;
+    };
+
+    $.fn.iconSortDESC = function(){
+        let iconSortDESCPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        iconSortDESCPath.setAttribute("d", "M176 352h-48V48a16 16 0 0 0 -16-16H80a16 16 0 0 0 -16 16v304H16c-14.2 0-21.4 17.2-11.3 27.3l80 96a16 16 0 0 0 22.6 0l80-96C197.4 369.3 190.2 352 176 352zm240-64H288a16 16 0 0 0 -16 16v32a16 16 0 0 0 16 16h56l-61.3 70.5A32 32 0 0 0 272 446.4V464a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0 -16-16h-56l61.3-70.5A32 32 0 0 0 432 321.6V304a16 16 0 0 0 -16-16zm31.1-85.4l-59.3-160A16 16 0 0 0 372.7 32h-41.4a16 16 0 0 0 -15.1 10.6l-59.3 160A16 16 0 0 0 272 224h24.8a16 16 0 0 0 15.2-11.1l4.4-12.9h71l4.4 12.9A16 16 0 0 0 407.2 224H432a16 16 0 0 0 15.1-21.4zM335.6 144L352 96l16.4 48z");
+        let iconSortDESC = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        iconSortDESC.setAttribute("viewBox", "0 0 448 512");
+        iconSortDESC.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        iconSortDESC.setAttribute("width", "16px");
+        iconSortDESC.setAttribute("height", "16px");
+        iconSortDESC.setAttribute('class', 'fa-arrow-down');
+        iconSortDESC.setAttribute('fill', '#666666');
+        iconSortDESC.style.display = 'none';
+        iconSortDESC.style.padding = '2px';
+        iconSortDESC.appendChild(iconSortDESCPath);
+        return iconSortDESC;
+    };
+
 }(jQuery));
