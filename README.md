@@ -273,6 +273,7 @@ let config = {...
     ...
 ...};
 ```
+![Noregisters.png](src%2FAssets%2Fimg%2FNoregisters.png)
 
 - **searchBox**: configurações da caixa de pesquisa
     - - **show**: boolean - Indica se a caixa de pesquisa será exibida. [obrigatório].
@@ -308,6 +309,54 @@ let config = {...
             style: 'max-width: 200px;'
         }
     }
+};
+```
+![searchBox.png](src%2FAssets%2Fimg%2FsearchBox.png)
+
+- **buttons**:
+- - **buttonShowColumns**: oculatar colunas
+```javascript
+let config = {...
+        buttons: {
+            buttonShowColumns: {
+                show: true,
+            },
+        },
+        ...
+};
+```
+![buttonShowColumns.png](src/Assets/img/buttonShowColumns.png)
+
+- - **buttonCSV**: em desenvolvimento
+- - **buttonPDF**: em desenvolvimento
+- - **buttonXLS**: em desenvolvimento
+
+
+- **translate**:
+
+```javascript
+let config = {...
+        texts:{
+            searchBox:{
+                placeholder: 'Pesquisa rápida',
+                    buttonText: 'Pesquisar'
+            },
+            buttonShowColumns:{
+                hoverText: 'Exibir/Ocultar Colunas',
+                    title: 'Ocultar Colunas'
+            },
+            pagination:{
+                first: 'Primeiro',
+                    last: 'Último',
+                    next: 'Próximo',
+                    prev: 'Anterior',
+                    showing: 'Exibindo',
+                    records: 'registros',
+                    to: 'ao',
+                    outOf: 'de'
+            },
+        }
+        ...
 };
 ```
 
