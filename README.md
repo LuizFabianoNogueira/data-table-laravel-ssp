@@ -99,14 +99,14 @@ Em sua controller adicione o seguinte código:
 
 public function listaDadosParaDataTable(Request $request): JsonResponse
     {
-        $list = Model::ftlFilters()
+        $list = Model::dtlFilters()
             ->dtlSearch()
             ->dtlOrder()
             ->paginate(($request->paginate ?? 10));
         return response()->json($list);
     }
 ```
-Observe que utilizamos ftlFilters(), dtlSearch(), dtlOrder() e  que são scopes criado pela trait caso queira personalizar crie em sua model 
+Observe que utilizamos dtlFilters(), dtlSearch(), dtlOrder() e  que são scopes criado pela trait caso queira personalizar crie em sua model 
 
 Veja exemplos de scopes:
 

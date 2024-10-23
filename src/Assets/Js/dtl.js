@@ -695,14 +695,14 @@ if (typeof $ !== 'undefined') {
                     let line = document.createElement('div');
                     line.setAttribute('class', 'form-check');
                     let label = document.createElement('label');
-                    label.setAttribute('for', 'check-'+dataColumn.name);
+                    label.setAttribute('for', configuration.alias+'-check-'+dataColumn.name);
                     label.setAttribute('class', 'form-check-label');
                     label.style.cssText = 'font-size: 12px; color: #666666; cursor: pointer;';
                     let input = document.createElement('input');
                     input.type = 'checkbox';
                     input.checked = true;
                     input.setAttribute('class', 'form-check-input');
-                    input.setAttribute('id', 'check-'+dataColumn.name);
+                    input.setAttribute('id', configuration.alias+'-check-'+dataColumn.name);
                     input.style.cssText = 'cursor: pointer;';
                     input.onclick = function() {
                         let header = $('[data-column="dtl-th-' + dataColumn.name + '"]');
