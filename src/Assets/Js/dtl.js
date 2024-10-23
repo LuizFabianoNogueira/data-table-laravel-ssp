@@ -212,7 +212,7 @@ if (typeof $ !== 'undefined') {
         COLUMNS.forEach(function(dataColumn) {
             if(dataColumn.hidden !== true) {
                 let th = document.createElement('th');
-                th.setAttribute('data-column', 'dtl-th-'+dataColumn.name);
+                th.setAttribute('data-column', 'dtl-'+configuration.alias+'-th-'+dataColumn.name);
                 th.style.fontFamily = dtlFont;
                 if (dataColumn.headerClass) {
                     th.setAttribute('class', dataColumn.headerClass);
@@ -367,7 +367,7 @@ if (typeof $ !== 'undefined') {
                 if (data && data.length > 0) {
                     $("#tbodyDataTable-" + $(table).attr('id')).children('tr').remove();
                     data.forEach(function (obj) {
-                        $(this).addLine($(table).attr('id'), obj, configuration.columns);
+                        $(this).addLine($(table).attr('id'), obj, configuration.columns, configuration);
                     });
                     TFOOT.append($(this).addPaginate(table, request, configuration));
                     TFOOT.append($(this).addPaginateInfo(table, request, configuration));
@@ -388,12 +388,12 @@ if (typeof $ !== 'undefined') {
 
     };
 
-    $.fn.addLine = function(id, objs, COLUMNS) {
+    $.fn.addLine = function(id, objs, COLUMNS, configuration) {
         let tr = document.createElement('tr');
         COLUMNS.forEach(function(dataColumn) {
             if(dataColumn.hidden !== true) {
                 let td = document.createElement('td');
-                td.setAttribute('data-column', 'dtl-td-'+dataColumn.name);
+                td.setAttribute('data-column', 'dtl-'+configuration.alias+'-td-'+dataColumn.name);
                 td.style.fontFamily = dtlFont;
                 if (dataColumn.class) {
                     td.setAttribute('class', dataColumn.class);
@@ -458,7 +458,6 @@ if (typeof $ !== 'undefined') {
 
         let th = document.createElement('th');
         th.colSpan = parseInt(configuration.countItems);
-        th.style.cssText = 'color:#333; font-size:12px; align-items: center; text-align: center;';
 
         let nav = document.createElement('nav');
         let ul = document.createElement('ul');
@@ -468,6 +467,8 @@ if (typeof $ !== 'undefined') {
         let btnFirstLi = document.createElement('li');
         btnFirstLi.setAttribute('class', 'page-item '+(dataPaginate.first_page_url ? (dataPaginate.current_page === 1 ? 'disabled' : '') : 'disabled'));
         let btnFirstA = document.createElement('a');
+        btnFirstA.style.cssText = 'font-size:12px; align-items: center; text-align: center;';
+        btnFirstA.style.fontFamily = 'arial';
         btnFirstA.onclick = function() {
             $(this).addContent(table, configuration, dataPaginate.first_page_url);
         };
@@ -480,6 +481,8 @@ if (typeof $ !== 'undefined') {
         let btnPreviousLi = document.createElement('li');
         btnPreviousLi.setAttribute('class', 'page-item '+(dataPaginate.prev_page_url ? '' : 'disabled'));
         let btnPreviousA = document.createElement('a');
+        btnPreviousA.style.cssText = 'font-size:12px; align-items: center; text-align: center;';
+        btnPreviousA.style.fontFamily = 'arial';
         btnPreviousA.onclick = function() {
             $(this).addContent(table, configuration, dataPaginate.prev_page_url);
         };
@@ -500,6 +503,8 @@ if (typeof $ !== 'undefined') {
             btnNumberLi.setAttribute('class', 'page-item '+disable+active);
 
             let btnNumberA = document.createElement('a');
+            btnNumberA.style.cssText = 'font-size:12px; align-items: center; text-align: center;';
+            btnNumberA.style.fontFamily = 'arial';
             btnNumberA.setAttribute('class', "page-link");
             btnNumberA.setAttribute('page', number.toString());
 
@@ -516,6 +521,8 @@ if (typeof $ !== 'undefined') {
         let btnNextLi = document.createElement('li');
         btnNextLi.setAttribute('class', 'page-item '+(dataPaginate.next_page_url ? '':'disabled'));
         let btnNextA = document.createElement('a');
+        btnNextA.style.cssText = 'font-size:12px; align-items: center; text-align: center;';
+        btnNextA.style.fontFamily = 'arial';
         btnNextA.onclick = function() {
             $(this).addContent(table, configuration, dataPaginate.next_page_url);
         };
@@ -528,6 +535,8 @@ if (typeof $ !== 'undefined') {
         let btnLastLi = document.createElement('li');
         btnLastLi.setAttribute('class', 'page-item '+(dataPaginate.last_page_url ? (dataPaginate.last_page === dataPaginate.current_page ? ' disabled' : '' ):' disabled'));
         let btnLastA = document.createElement('a');
+        btnLastA.style.cssText = 'font-size:12px; align-items: center; text-align: center;';
+        btnLastA.style.fontFamily = 'arial';
         btnLastA.onclick = function() {
             $(this).addContent(table, configuration, dataPaginate.last_page_url)
         };
@@ -705,8 +714,8 @@ if (typeof $ !== 'undefined') {
                     input.setAttribute('id', configuration.alias+'-check-'+dataColumn.name);
                     input.style.cssText = 'cursor: pointer;';
                     input.onclick = function() {
-                        let header = $('[data-column="dtl-th-' + dataColumn.name + '"]');
-                        let column = $('[data-column="dtl-td-' + dataColumn.name + '"]');
+                        let header = $('[data-column="dtl-'+configuration.alias+'-th-' + dataColumn.name + '"]');
+                        let column = $('[data-column="dtl-'+configuration.alias+'-td-' + dataColumn.name + '"]');
                         if($(this).is(':checked')) {
                             $(header).show();
                             $(column).show();
