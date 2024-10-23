@@ -26,7 +26,7 @@ if (typeof $ !== 'undefined') {
             method : (config.request.method ?? 'GET'),
             params : (config.request.params ?? null),
             columns : (config.columns ?? null),
-            txtNoResult : (config.table.txtNoResult ?? 'Sem resultados'),
+            txtNoResult : ((config.texts && config.texts.txtNoResult)  ?? 'No results'),
             alias : (config.table.alias ?? null),
 
             searchBox : (config.searchBox ?? ''),
@@ -49,7 +49,7 @@ if (typeof $ !== 'undefined') {
             $(table).prop('class', 'table-dtl table-striped-dtl table-hover-dtl');
         }
 
-        if(configuration.searchBox) {
+        if(configuration.searchBox !== undefined) {
             if(configuration.searchBox.show) {
 
                 let searchBoxRow = document.createElement('div');
@@ -99,7 +99,7 @@ if (typeof $ !== 'undefined') {
 
                 $(table).before(searchBoxRow);
 
-                if (!configuration.searchBox.searchInput.id) {
+                if (configuration.searchBox.searchInput.id === undefined || configuration.searchBox.searchInput.id === false) {
 
                     let searchBox = $('#search-box-tdr-' + configuration.alias);
 
@@ -322,7 +322,7 @@ if (typeof $ !== 'undefined') {
         $(this).addLoading(table, configuration.countItems, configuration);
         let TFOOT = document.createElement('tfoot');
 
-        if (configuration.searchBox.searchInput.id){
+        if (configuration && configuration.searchBox && configuration.searchBox.searchInput && configuration.searchBox.searchInput.id) {
             configuration.dataParamsDefault.search = $("#"+configuration.searchBox.searchInput.id).val();
         } else {
             configuration.dataParamsDefault.search = $("#input-search-"+configuration.alias).val();
@@ -473,7 +473,7 @@ if (typeof $ !== 'undefined') {
             $(this).addContent(table, configuration, dataPaginate.first_page_url);
         };
         btnFirstA.setAttribute('class', "page-link");
-        btnFirstA.append(configuration.texts.pagination.first??'Primeiro');
+        btnFirstA.append((configuration.texts && configuration.texts.pagination && configuration.texts.pagination.first)??'Primeiro');
         btnFirstLi.append(btnFirstA);
         ul.append(btnFirstLi);
 
@@ -487,7 +487,7 @@ if (typeof $ !== 'undefined') {
             $(this).addContent(table, configuration, dataPaginate.prev_page_url);
         };
         btnPreviousA.setAttribute('class', "page-link");
-        btnPreviousA.append(configuration.texts.pagination.prev??'Anterior');
+        btnPreviousA.append((configuration.texts && configuration.texts.pagination && configuration.texts.pagination.prev)??'Anterior');
         btnPreviousLi.append(btnPreviousA);
         ul.append(btnPreviousLi);
 
@@ -527,7 +527,7 @@ if (typeof $ !== 'undefined') {
             $(this).addContent(table, configuration, dataPaginate.next_page_url);
         };
         btnNextA.setAttribute('class', "page-link");
-        btnNextA.append(configuration.texts.pagination.next??'Próxima');
+        btnNextA.append((configuration.texts && configuration.texts.pagination && configuration.texts.pagination.next)??'Próxima');
         btnNextLi.append(btnNextA);
         ul.append(btnNextLi);
 
@@ -541,7 +541,7 @@ if (typeof $ !== 'undefined') {
             $(this).addContent(table, configuration, dataPaginate.last_page_url)
         };
         btnLastA.setAttribute('class', "page-link");
-        btnLastA.append(configuration.texts.pagination.last??'Última');
+        btnLastA.append((configuration.texts && configuration.texts.pagination && configuration.texts.pagination.last)??'Última');
         btnLastLi.append(btnLastA);
         ul.append(btnLastLi);
 
@@ -578,9 +578,10 @@ if (typeof $ !== 'undefined') {
         th.colSpan = parseInt(configuration.countItems);
         th.style.cssText = 'color:#999; font-size:10px; border:none;';
 
-        let content = (configuration.texts.pagination.showing??"showing")+" "
-            +dataPaginate.countItems+ " "+(configuration.texts.pagination.records??"records")+" ("+
-            dataPaginate.from+" "+(configuration.texts.pagination.to??"to")+" "+dataPaginate.to+") "+(configuration.texts.pagination.outOf??"out of")+" "+dataPaginate.total
+        let content = ((configuration.texts && configuration.texts.pagination && configuration.texts.pagination.showing)??"showing")+" "
+            +dataPaginate.countItems+ " "+((configuration.texts && configuration.texts.pagination && configuration.texts.pagination.records)??"records")+" ("+
+            dataPaginate.from+" "+((configuration.texts && configuration.texts.pagination && configuration.texts.pagination.to)??"to")+" "+dataPaginate.to+") "
+                    +((configuration.texts && configuration.texts.pagination && configuration.texts.pagination.outOf)??"out of")+" "+dataPaginate.total;
         th.append(content);
         tr.append(th);
 
