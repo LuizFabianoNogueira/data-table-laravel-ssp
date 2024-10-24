@@ -49,57 +49,54 @@ if (typeof $ !== 'undefined') {
             $(table).prop('class', 'table-dtl table-striped-dtl table-hover-dtl');
         }
 
+        let searchBoxRow = document.createElement('div');
+        searchBoxRow.setAttribute('class', 'row p-1');
+        searchBoxRow.setAttribute('id', 'search-box-row-'+configuration.alias);
+
+        let searchBoxTdL = document.createElement('div');
+        searchBoxTdL.setAttribute('id', 'search-box-tdl-'+configuration.alias);
+        searchBoxTdL.setAttribute('class', 'col-6 p-1');
+
+        if(configuration.buttons && configuration.buttons.buttonShowColumns && configuration.buttons.buttonShowColumns.show === true) {
+            searchBoxTdL.append($(this).buttonShowColumns(configuration));
+        }
+        if(configuration.buttons && configuration.buttons.buttonCSV && configuration.buttons.buttonCSV.show === true) {
+            let btnExportCSV = document.createElement('button');
+            btnExportCSV.setAttribute('class', 'btn btn-outline-secondary btn-sm m-2 p-1');
+            btnExportCSV.append($(this).iconCSV());
+            searchBoxTdL.append(btnExportCSV);
+        }
+        if(configuration.buttons && configuration.buttons.buttonPDF && configuration.buttons.buttonPDF.show === true) {
+            let btnExportPDF = document.createElement('button');
+            btnExportPDF.setAttribute('class', 'btn btn-outline-secondary btn-sm m-2 p-1');
+            btnExportPDF.append($(this).iconPDF());
+            searchBoxTdL.append(btnExportPDF);
+        }
+        if(configuration.buttons && configuration.buttons.buttonXLS && configuration.buttons.buttonXLS.show === true) {
+            let btnExportExcel = document.createElement('button');
+            btnExportExcel.setAttribute('class', 'btn btn-outline-secondary btn-sm m-2 p-1');
+            btnExportExcel.append($(this).iconXLS());
+            searchBoxTdL.append(btnExportExcel);
+        }
+
+        searchBoxRow.append(searchBoxTdL);
+
+        let searchBoxTdR = document.createElement('div');
+        searchBoxTdR.setAttribute('class', 'col-6 p-1');
+
+        let divBoxSearch = document.createElement('div');
+        divBoxSearch.setAttribute('id', 'search-box-tdr-'+configuration.alias);
+        divBoxSearch.setAttribute('class', 'input-group');
+        divBoxSearch.setAttribute('style', 'display: flex; justify-content: flex-end');
+        searchBoxTdR.append(divBoxSearch);
+        searchBoxRow.append(searchBoxTdR);
+
+        $(table).before(searchBoxRow);
+
         if(configuration.searchBox !== undefined) {
             if(configuration.searchBox.show) {
 
-                let searchBoxRow = document.createElement('div');
-                searchBoxRow.setAttribute('class', 'row p-1');
-                searchBoxRow.setAttribute('id', 'search-box-row-'+configuration.alias);
-
-                let searchBoxTdL = document.createElement('div');
-                searchBoxTdL.setAttribute('id', 'search-box-tdl-'+configuration.alias);
-                searchBoxTdL.setAttribute('class', 'col-6 p-1');
-
-
-                let btnExportCSV = document.createElement('button');
-                btnExportCSV.setAttribute('class', 'btn btn-outline-secondary btn-sm m-2 p-1');
-                btnExportCSV.append($(this).iconCSV());
-
-                let btnExportPDF = document.createElement('button');
-                btnExportPDF.setAttribute('class', 'btn btn-outline-secondary btn-sm m-2 p-1');
-                btnExportPDF.append($(this).iconPDF());
-
-                let btnExportExcel = document.createElement('button');
-                btnExportExcel.setAttribute('class', 'btn btn-outline-secondary btn-sm m-2 p-1');
-                btnExportExcel.append($(this).iconXLS());
-
-                if(configuration.buttons.buttonShowColumns.show === true) {
-                    searchBoxTdL.append($(this).buttonShowColumns(configuration));
-                }
-                if(configuration.buttons.buttonCSV.show === true) {
-                    searchBoxTdL.append(btnExportCSV);
-                }
-                if(configuration.buttons.buttonPDF.show === true) {
-                    searchBoxTdL.append(btnExportPDF);
-                }
-                if(configuration.buttons.buttonXLS.show === true) {
-                    searchBoxTdL.append(btnExportExcel);
-                }
-
-                searchBoxRow.append(searchBoxTdL);
-
-                let searchBoxTdR = document.createElement('div');
-                searchBoxTdR.setAttribute('class', 'col-6 p-1');
-                let divBoxSearch = document.createElement('div');
-                divBoxSearch.setAttribute('id', 'search-box-tdr-'+configuration.alias);
-                divBoxSearch.setAttribute('class', 'input-group');
-                divBoxSearch.setAttribute('style', 'display: flex; justify-content: flex-end');
-                searchBoxTdR.append(divBoxSearch);
-                searchBoxRow.append(searchBoxTdR);
-
-                $(table).before(searchBoxRow);
-
-                if (configuration.searchBox.searchInput.id === undefined || configuration.searchBox.searchInput.id === false) {
+                if (!configuration.searchBox || !configuration.searchBox.searchInput || !configuration.searchBox.searchInput.id || configuration.searchBox.searchInput.id === false) {
 
                     let searchBox = $('#search-box-tdr-' + configuration.alias);
 
@@ -113,7 +110,7 @@ if (typeof $ !== 'undefined') {
                     buttonSearch.setAttribute('id', 'button-search-' + configuration.alias);
                     buttonSearch.setAttribute('style', 'border:none; background: none; box-shadow: none; outline: none; color: inherit; font: inherit; cursor: pointer;');
                     buttonSearch.setAttribute('class', '');
-                    $(buttonSearch).append(configuration.texts.searchBox.buttonText?? 'Search');
+                    $(buttonSearch).append((configuration.texts && configuration.texts.searchBox && configuration.texts.searchBox.buttonText)?? 'Search');
 
                     $(buttonSearch).on('click', function (event) {
                         event.preventDefault();
@@ -131,29 +128,29 @@ if (typeof $ !== 'undefined') {
                     inputSearch.setAttribute('type', 'text');
                     inputSearch.setAttribute('id', 'input-search-' + configuration.alias);
                     inputSearch.setAttribute('name', 'input-search-' + configuration.alias);
-                    inputSearch.setAttribute('class', (configuration.searchBox.searchInput.class ?? 'form-control'));
-                    inputSearch.setAttribute('style', (configuration.searchBox.searchInput.style ?? ''));
-                    inputSearch.setAttribute('placeholder', (configuration.texts.searchBox.placeholder ?? 'Search'));
+                    inputSearch.setAttribute('class', ((configuration.searchBox && configuration.searchBox.searchInput && configuration.searchBox.searchInput.class) ?? 'form-control'));
+                    inputSearch.setAttribute('style', ((configuration.searchBox && configuration.searchBox.searchInput && configuration.searchBox.searchInput.style) ?? ''));
+                    inputSearch.setAttribute('placeholder', ((configuration.texts && configuration.texts.searchBox && configuration.texts.searchBox.placeholder) ?? 'Search'));
                     let timer = null;
                     inputSearch.addEventListener('input', function () {
                         let chars = $(this).val();
                         clearTimeout(timer);
-                        if (chars.length >= (configuration.searchBox.autoSearchMinLength ?? 3)) {
+                        if (chars.length >= ((configuration.searchBox && configuration.searchBox.autoSearchMinLength) ?? 3)) {
                             timer = setTimeout(function () {
                                 $(table).addContent(table, configuration)
-                            }, (configuration.searchBox.autoSearchDelay ?? 1000));
+                            }, ((configuration.searchBox && configuration.searchBox.autoSearchDelay) ?? 1000));
                         }
                     });
 
-                    if(configuration.searchBox.iconLeft.show === true) {
+                    if(configuration.searchBox && configuration.searchBox.iconLeft && configuration.searchBox.iconLeft.show === true) {
                         $(searchBox).append(spanL);
                     }
                     $(searchBox).append(inputSearch);
-                    if(configuration.searchBox.buttonSearch.show === true) {
+                    if(configuration.searchBox && configuration.searchBox.buttonSearch && configuration.searchBox.buttonSearch.show === true) {
                         $(searchBox).append(spanR);
                     }
 
-                    if (configuration.searchBox.autoSearchOnEnter !== false) {
+                    if (configuration.searchBox && configuration.searchBox.autoSearchOnEnter !== false) {
                         $(inputSearch).on('keyup', function (event) {
                             event.preventDefault();
                             if (event.which === 13) {
@@ -164,14 +161,15 @@ if (typeof $ !== 'undefined') {
 
                 } else {
 
-                    if (configuration.searchBox.searchButton) {
-                        $("#" + configuration.searchButton).unbind('click').on('click', function (event) {
+                    if (configuration.searchBox && configuration.searchBox.searchButton) {
+                        $("#" + configuration.searchBox.searchButton).unbind('click').on('click', function (event) {
                             event.preventDefault();
                             $(this).addContent(table, configuration);
                         });
                     }
-                    if (configuration.searchBox.searchInput.id) {
-                        let searchInput = $("#" + configuration.searchInput);
+
+                    if (configuration.searchBox && configuration.searchBox.searchInput && configuration.searchBox.searchInput.id) {
+                        let searchInput = $("#" + configuration.searchBox.searchInput);
                         let timer = null;
                         $(searchInput).unbind('click').on('keyup', function (event) {
                             event.preventDefault();
@@ -693,11 +691,11 @@ if (typeof $ !== 'undefined') {
         let divDropdownColumns = document.createElement('div');
         divDropdownColumns.setAttribute('id', 'divDropdownColumns');
         divDropdownColumns.setAttribute('class', 'dropdown-menu p-2');
-        divDropdownColumns.setAttribute('title', configuration.texts.buttonShowColumns.hoverText??'Hide Columns');
+        divDropdownColumns.setAttribute('title', (configuration.texts && configuration.texts.buttonShowColumns && configuration.texts.buttonShowColumns.hoverText)??'Hide Columns');
         divDropdownColumns.style.display = 'none';
         let title = document.createElement('h6');
         title.setAttribute('class', 'dropdown-header');
-        title.append(configuration.texts.buttonShowColumns.title??'Hide Columns');
+        title.append((configuration.texts && configuration.texts.buttonShowColumns && configuration.texts.buttonShowColumns.title)??'Hide Columns');
         divDropdownColumns.append(title);
         COLUMNS.forEach(function(dataColumn) {
             if(dataColumn.hidden !== true) {
@@ -753,9 +751,9 @@ if (typeof $ !== 'undefined') {
     //--------------------------------- ICONS buttons---------------------------------
     let iconSizeWidth = 24;
     let iconSizeHeight = 24;
+    const svgNS = "http://www.w3.org/2000/svg";
 
     $.fn.iconShowColumns = function(){
-        const svgNS = "http://www.w3.org/2000/svg";  // Namespace SVG
         const svg = document.createElementNS(svgNS, "svg");
         svg.setAttribute("height", "24px");
         svg.setAttribute("width", "24px");
@@ -765,48 +763,36 @@ if (typeof $ !== 'undefined') {
         svg.setAttribute("xmlns", svgNS);
         svg.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
         svg.setAttribute("xml:space", "preserve");
-
         const g = document.createElementNS(svgNS, "g");
-
         const path1 = document.createElementNS(svgNS, "path");
         path1.setAttribute("style", "fill:#999999;");
         path1.setAttribute("d", "M64,0H24v16h40V0z M16,16H0v40h16V16z M16,96H0v40h16V96z M16,176H0v40h16V176z M16,256H0v40h16V256z M16,336H0v40h16V336z M16,416H0v40h16V416z M16,496H0v16h24v-16H16z M104,496H64v16h40V496z M144,472h-16v40h16V472z M144,392h-16v40h16V392z M144,312h-16v40h16V312z M144,232h-16v40h16V232z M144,152h-16v40h16V152z M144,72h-16v40h16V72z M144,0h-40v16h24v16h16V0z");
-
         const path2 = document.createElementNS(svgNS, "path");
         path2.setAttribute("style", "fill:#999999;");
         path2.setAttribute("d", "M432,0h-40v16h40V0z M384,16h-16v40h16V16z M384,96h-16v40h16V96z M384,176h-16v40h16V176z M384,256h-16v40h16V256z M384,336h-16v40h16V336z M384,416h-16v40h16V416z M384,496h-16v16h24v-16H384z M472,496h-40v16h40V496z M512,472h-16v40h16V472z M512,392h-16v40h16V392z M512,312h-16v40h16V312z M512,232h-16v40h16V232z M512,152h-16v40h16V152z M512,72h-16v40h16V72z M512,0h-40v16h24v16h16V0z");
-
         g.appendChild(path1);
         g.appendChild(path2);
         svg.appendChild(g);
-
         const path3 = document.createElementNS(svgNS, "path");
         path3.setAttribute("style", "fill:#FA8072;");
         path3.setAttribute("d", "M312,16v480H200V16H312 M328,0H184v512h144V0z");
-
         svg.appendChild(path3);
         return svg;
     };
 
     $.fn.iconCSV = function(){
-
-        const svgNS = "http://www.w3.org/2000/svg";
-
         const svg = document.createElementNS(svgNS, "svg");
         svg.setAttribute("width", iconSizeWidth+"px");
         svg.setAttribute("height", iconSizeHeight+"px");
         svg.setAttribute("viewBox", "0 0 400 400");
-
         const g = document.createElementNS(svgNS, "g");
         g.setAttribute("id", "xxx-word");
-
         function createPath(d) {
             const path = document.createElementNS(svgNS, "path");
             path.setAttribute("fill", "#999999");
             path.setAttribute("d", d);
             return path;
         }
-
         g.appendChild(createPath("M325,105H250a5,5,0,0,1-5-5V25a5,5,0,1,1,10,0V95h70a5,5,0,0,1,0,10Z"));
         g.appendChild(createPath("M325,154.83a5,5,0,0,1-5-5V102.07L247.93,30H100A20,20,0,0,0,80,50v98.17a5,5,0,0,1-10,0V50a30,30,0,0,1,30-30H250a5,5,0,0,1,3.54,1.46l75,75A5,5,0,0,1,330,100v49.83A5,5,0,0,1,325,154.83Z"));
         g.appendChild(createPath("M300,380H100a30,30,0,0,1-30-30V275a5,5,0,0,1,10,0v75a20,20,0,0,0,20,20H300a20,20,0,0,0,20-20V275a5,5,0,0,1,10,0v75A30,30,0,0,1,300,380Z"));
@@ -816,27 +802,20 @@ if (typeof $ !== 'undefined') {
         g.appendChild(createPath("M168.48,217.48l8.91,1a20.84,20.84,0,0,1-6.19,13.18q-5.33,5.18-14,5.18-7.31,0-11.86-3.67a23.43,23.43,0,0,1-7-10,37.74,37.74,0,0,1-2.46-13.87q0-12.19,5.78-19.82t15.9-7.64a18.69,18.69,0,0,1,13.2,4.88q5.27,4.88,6.64,14l-8.91.94q-2.46-12.07-10.86-12.07-5.39,0-8.38,5t-3,14.55q0,9.69,3.2,14.63t8.48,4.94a9.3,9.3,0,0,0,7.19-3.32A13.25,13.25,0,0,0,168.48,217.48Z"));
         g.appendChild(createPath("M179.41,223.15l9.34-2q1.68,7.93,12.89,7.93,5.12,0,7.87-2a6.07,6.07,0,0,0,2.75-5,7.09,7.09,0,0,0-1.25-4q-1.25-1.85-5.35-2.91l-10.2-2.66a25.1,25.1,0,0,1-7.73-3.11,12.15,12.15,0,0,1-4-4.9,15.54,15.54,0,0,1-1.5-6.76,14,14,0,0,1,5.31-11.46q5.31-4.32,13.59-4.32a24.86,24.86,0,0,1,12.29,3,13.56,13.56,0,0,1,6.89,8.52l-9.14,2.27q-2.11-6.05-9.84-6.05-4.49,0-6.86,1.88a5.83,5.83,0,0,0-2.36,4.77q0,4.57,7.42,6.41l9.06,2.27q8.24,2.07,11.05,6.11a15.29,15.29,0,0,1,2.81,8.93,14.7,14.7,0,0,1-5.92,12.36q-5.92,4.51-15.33,4.51a28,28,0,0,1-13.89-3.32A16.29,16.29,0,0,1,179.41,223.15Z"));
         g.appendChild(createPath("M250.31,236h-9.77L224.1,182.68h10.16l12.23,40.86L259,182.68h8Z"));
-
         svg.appendChild(g);
-
         return svg;
     };
 
     $.fn.iconPDF = function(){
-        const svgNS = "http://www.w3.org/2000/svg"; // Namespace para SVG
-
         const svg = document.createElementNS(svgNS, "svg");
         svg.setAttribute("width", iconSizeWidth+"px");
         svg.setAttribute("height", iconSizeHeight+"px");
         svg.setAttribute("viewBox", "0 0 400 400");
         svg.setAttribute("fill", "#000000");
-
         const g = document.createElementNS(svgNS, "g");
         g.setAttribute("id", "SVGRepo_iconCarrier");
-
         const innerG = document.createElementNS(svgNS, "g");
         innerG.setAttribute("id", "xxx-word");
-
         const pathsData = [
             "M325,105H250a5,5,0,0,1-5-5V25a5,5,0,0,1,10,0V95h70a5,5,0,0,1,0,10Z",
             "M325,154.83a5,5,0,0,1-5-5V102.07L247.93,30H100A20,20,0,0,0,80,50v98.17a5,5,0,0,1-10,0V50a30,30,0,0,1,30-30H250a5,5,0,0,1,3.54,1.46l75,75A5,5,0,0,1,330,100v49.83A5,5,0,0,1,325,154.83Z",
@@ -848,41 +827,33 @@ if (typeof $ !== 'undefined') {
             "M183,236V182.68H202.7q10.9,0,17.5,7.71t6.6,19q0,11.33-6.8,18.95T200.55,236Zm9.88-7.85h8a14.36,14.36,0,0,0,10.94-4.84q4.49-4.84,4.49-14.41a21.91,21.91,0,0,0-3.93-13.22,12.22,12.22,0,0,0-10.37-5.41h-9.14Z",
             "M245.59,236H235.7V182.68h33.71v8.24H245.59v14.57h18.75v8H245.59Z"
         ];
-
         pathsData.forEach(d => {
             const path = document.createElementNS(svgNS, "path");
             path.setAttribute("fill", "#ff402f");
             path.setAttribute("d", d);
             innerG.appendChild(path);
         });
-
         g.appendChild(innerG);
-
         svg.appendChild(g);
         return svg;
     };
 
     $.fn.iconXLS = function(){
-        const svgNS = "http://www.w3.org/2000/svg";
         const svg = document.createElementNS(svgNS, "svg");
         svg.setAttribute("width", iconSizeWidth+"px");
         svg.setAttribute("height", iconSizeHeight+"px");
         svg.setAttribute("viewBox", "0 0 400 400");
-
         const style = document.createElementNS(svgNS, "style");
         style.textContent = `.cls-1{fill:#0f773d;}`;
         svg.appendChild(style);
-
         const g = document.createElementNS(svgNS, "g");
         g.setAttribute("id", "xxx-word");
-
         function addPath(d) {
             const path = document.createElementNS(svgNS, "path");
             path.setAttribute("fill", "#0f773d");
             path.setAttribute("d", d);
             g.appendChild(path);
         }
-
         addPath("M325,105H250a5,5,0,0,1-5-5V25a5,5,0,1,1,10,0V95h70a5,5,0,0,1,0,10Z");
         addPath("M325,154.83a5,5,0,0,1-5-5V102.07L247.93,30H100A20,20,0,0,0,80,50v98.17a5,5,0,0,1-10,0V50a30,30,0,0,1,30-30H250a5,5,0,0,1,3.54,1.46l75,75A5,5,0,0,1,330,100v49.83A5,5,0,0,1,325,154.83Z");
         addPath("M300,380H100a30,30,0,0,1-30-30V275a5,5,0,0,1,10,0v75a20,20,0,0,0,20,20H300a20,20,0,0,0,20-20V275a5,5,0,0,1,10,0v75A30,30,0,0,1,300,380Z");
@@ -894,84 +865,81 @@ if (typeof $ !== 'undefined') {
         addPath("M217.4,221.51l7.66.78q-1.49,7.42-5.74,11A15.5,15.5,0,0,1,209,236.82q-8.17,0-12.56-6a23.89,23.89,0,0,1-4.39-14.59q0-8.91,4.8-14.73a15.77,15.77,0,0,1,12.81-5.82q12.89,0,15.35,13.59l-7.66,1.05q-1-7.34-7.23-7.34a6.9,6.9,0,0,0-6.58,4,20.66,20.66,0,0,0-2.05,9.59q0,6,2.13,9.22a6.74,6.74,0,0,0,6,3.24Q215.49,229,217.4,221.51Z");
         addPath("M257,223.42l8,1.09a16.84,16.84,0,0,1-6.09,8.83,18.13,18.13,0,0,1-11.37,3.48q-8.2,0-13.2-5.51t-5-14.92q0-8.94,5-14.8t13.67-5.86q8.44,0,13,5.78t4.61,14.84l0,1H238.61a22.12,22.12,0,0,0,.76,6.45,8.68,8.68,0,0,0,3,4.22,8.83,8.83,0,0,0,5.66,1.8Q254.67,229.83,257,223.42Zm-.55-11.8a9.92,9.92,0,0,0-2.56-7,8.63,8.63,0,0,0-12.36-.18,11.36,11.36,0,0,0-2.89,7.13Z");
         addPath("M282.71,236h-8.91V182.68h8.91Z");
-
         svg.appendChild(g);
         return svg;
     };
 
     $.fn.iconLBoxSearch = function(){
-        let iconSpanLsvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        iconSpanLsvg.setAttribute("width", "24");
-        iconSpanLsvg.setAttribute("height", "24");
-        iconSpanLsvg.setAttribute("viewBox", "0 0 24 24");
-        iconSpanLsvg.setAttribute("fill", "none");
-
-        let iconSpanLPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        iconSpanLPath.setAttribute("d", "M5 4H17M5 8H13M5 12H9M5 16H8M5 20H11M16.4729 17.4525C17.046 16.8743 17.4 16.0785 17.4 15.2C17.4 13.4327 15.9673 12 14.2 12C12.4327 12 11 13.4327 11 15.2C11 16.9673 12.4327 18.4 14.2 18.4C15.0888 18.4 15.893 18.0376 16.4729 17.4525ZM16.4729 17.4525L19 20");
-        iconSpanLPath.setAttribute("stroke", "#464455");
-        iconSpanLPath.setAttribute("stroke-linecap", "round");
-        iconSpanLPath.setAttribute("stroke-linejoin", "round");
-
-        iconSpanLsvg.append(iconSpanLPath);
-        return iconSpanLsvg;
+        let svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("width", "24");
+        svg.setAttribute("height", "24");
+        svg.setAttribute("viewBox", "0 0 24 24");
+        svg.setAttribute("fill", "none");
+        let path = document.createElementNS(svgNS, "path");
+        path.setAttribute("d", "M5 4H17M5 8H13M5 12H9M5 16H8M5 20H11M16.4729 17.4525C17.046 16.8743 17.4 16.0785 17.4 15.2C17.4 13.4327 15.9673 12 14.2 12C12.4327 12 11 13.4327 11 15.2C11 16.9673 12.4327 18.4 14.2 18.4C15.0888 18.4 15.893 18.0376 16.4729 17.4525ZM16.4729 17.4525L19 20");
+        path.setAttribute("stroke", "#464455");
+        path.setAttribute("stroke-linecap", "round");
+        path.setAttribute("stroke-linejoin", "round");
+        svg.append(path);
+        return svg;
     };
 
     $.fn.iconSort = function(){
-        const iconSortPath1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        iconSortPath1.setAttribute("d", "M16 18L16 6M16 6L20 10.125M16 6L12 10.125");
-        iconSortPath1.setAttribute("stroke", "#CECECE");
-        iconSortPath1.setAttribute("stroke-width", "2");
-        iconSortPath1.setAttribute("stroke-linecap", "round");
-        iconSortPath1.setAttribute("stroke-linejoin", "round");
-        const iconSortPath2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        iconSortPath2.setAttribute("d", "M8 6L8 18M8 18L12 13.875M8 18L4 13.875");
-        iconSortPath2.setAttribute("stroke", "#CECECE");
-        iconSortPath2.setAttribute("stroke-width", "2");
-        iconSortPath2.setAttribute("stroke-linecap", "round");
-        iconSortPath2.setAttribute("stroke-linejoin", "round");
-        const iconSort = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        iconSort.setAttribute("viewBox", "0 0 24 24");
-        iconSort.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-        iconSort.setAttribute("width", "24");
-        iconSort.setAttribute("height", "24");
-        iconSort.setAttribute('class', 'fa-sort');
-        iconSort.setAttribute('fill', 'none');
-        iconSort.style.padding = '2px';
-        iconSort.appendChild(iconSortPath1);
-        iconSort.appendChild(iconSortPath2);
-        return iconSort;
+        const path1 = document.createElementNS(svgNS, "path");
+        path1.setAttribute("d", "M16 18L16 6M16 6L20 10.125M16 6L12 10.125");
+        path1.setAttribute("stroke", "#CECECE");
+        path1.setAttribute("stroke-width", "2");
+        path1.setAttribute("stroke-linecap", "round");
+        path1.setAttribute("stroke-linejoin", "round");
+        const path2 = document.createElementNS(svgNS, "path");
+        path2.setAttribute("d", "M8 6L8 18M8 18L12 13.875M8 18L4 13.875");
+        path2.setAttribute("stroke", "#CECECE");
+        path2.setAttribute("stroke-width", "2");
+        path2.setAttribute("stroke-linecap", "round");
+        path2.setAttribute("stroke-linejoin", "round");
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("viewBox", "0 0 24 24");
+        svg.setAttribute("xmlns", svgNS);
+        svg.setAttribute("width", "24");
+        svg.setAttribute("height", "24");
+        svg.setAttribute('class', 'fa-sort');
+        svg.setAttribute('fill', 'none');
+        svg.style.padding = '2px';
+        svg.appendChild(path1);
+        svg.appendChild(path2);
+        return svg;
     };
 
     $.fn.iconSortASC = function(){
-        let iconSortASCPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        iconSortASCPath.setAttribute("d", "M16 160h48v304a16 16 0 0 0 16 16h32a16 16 0 0 0 16-16V160h48c14.2 0 21.4-17.2 11.3-27.3l-80-96a16 16 0 0 0 -22.6 0l-80 96C-5.4 142.7 1.8 160 16 160zm272 64h128a16 16 0 0 0 16-16v-32a16 16 0 0 0 -16-16h-56l61.3-70.5A32 32 0 0 0 432 65.6V48a16 16 0 0 0 -16-16H288a16 16 0 0 0 -16 16v32a16 16 0 0 0 16 16h56l-61.3 70.5A32 32 0 0 0 272 190.4V208a16 16 0 0 0 16 16zm159.1 234.6l-59.3-160A16 16 0 0 0 372.7 288h-41.4a16 16 0 0 0 -15.1 10.6l-59.3 160A16 16 0 0 0 272 480h24.8a16 16 0 0 0 15.2-11.1l4.4-12.9h71l4.4 12.9A16 16 0 0 0 407.2 480H432a16 16 0 0 0 15.1-21.4zM335.6 400L352 352l16.4 48z");
-        let iconSortASC = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        iconSortASC.setAttribute("viewBox", "0 0 448 512");
-        iconSortASC.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-        iconSortASC.setAttribute("width", "16px");
-        iconSortASC.setAttribute("height", "16px");
-        iconSortASC.setAttribute('class', 'fa-arrow-up');
-        iconSortASC.setAttribute('fill', '#666666');
-        iconSortASC.style.display = 'none';
-        iconSortASC.style.padding = '2px';
-        iconSortASC.appendChild(iconSortASCPath);
-        return iconSortASC;
+        let path = document.createElementNS(svgNS, "path");
+        path.setAttribute("d", "M16 160h48v304a16 16 0 0 0 16 16h32a16 16 0 0 0 16-16V160h48c14.2 0 21.4-17.2 11.3-27.3l-80-96a16 16 0 0 0 -22.6 0l-80 96C-5.4 142.7 1.8 160 16 160zm272 64h128a16 16 0 0 0 16-16v-32a16 16 0 0 0 -16-16h-56l61.3-70.5A32 32 0 0 0 432 65.6V48a16 16 0 0 0 -16-16H288a16 16 0 0 0 -16 16v32a16 16 0 0 0 16 16h56l-61.3 70.5A32 32 0 0 0 272 190.4V208a16 16 0 0 0 16 16zm159.1 234.6l-59.3-160A16 16 0 0 0 372.7 288h-41.4a16 16 0 0 0 -15.1 10.6l-59.3 160A16 16 0 0 0 272 480h24.8a16 16 0 0 0 15.2-11.1l4.4-12.9h71l4.4 12.9A16 16 0 0 0 407.2 480H432a16 16 0 0 0 15.1-21.4zM335.6 400L352 352l16.4 48z");
+        let svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("viewBox", "0 0 448 512");
+        svg.setAttribute("xmlns", svgNS);
+        svg.setAttribute("width", "16px");
+        svg.setAttribute("height", "16px");
+        svg.setAttribute('class', 'fa-arrow-up');
+        svg.setAttribute('fill', '#666666');
+        svg.style.display = 'none';
+        svg.style.padding = '2px';
+        svg.appendChild(path);
+        return svg;
     };
 
     $.fn.iconSortDESC = function(){
-        let iconSortDESCPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        iconSortDESCPath.setAttribute("d", "M176 352h-48V48a16 16 0 0 0 -16-16H80a16 16 0 0 0 -16 16v304H16c-14.2 0-21.4 17.2-11.3 27.3l80 96a16 16 0 0 0 22.6 0l80-96C197.4 369.3 190.2 352 176 352zm240-64H288a16 16 0 0 0 -16 16v32a16 16 0 0 0 16 16h56l-61.3 70.5A32 32 0 0 0 272 446.4V464a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0 -16-16h-56l61.3-70.5A32 32 0 0 0 432 321.6V304a16 16 0 0 0 -16-16zm31.1-85.4l-59.3-160A16 16 0 0 0 372.7 32h-41.4a16 16 0 0 0 -15.1 10.6l-59.3 160A16 16 0 0 0 272 224h24.8a16 16 0 0 0 15.2-11.1l4.4-12.9h71l4.4 12.9A16 16 0 0 0 407.2 224H432a16 16 0 0 0 15.1-21.4zM335.6 144L352 96l16.4 48z");
-        let iconSortDESC = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        iconSortDESC.setAttribute("viewBox", "0 0 448 512");
-        iconSortDESC.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-        iconSortDESC.setAttribute("width", "16px");
-        iconSortDESC.setAttribute("height", "16px");
-        iconSortDESC.setAttribute('class', 'fa-arrow-down');
-        iconSortDESC.setAttribute('fill', '#666666');
-        iconSortDESC.style.display = 'none';
-        iconSortDESC.style.padding = '2px';
-        iconSortDESC.appendChild(iconSortDESCPath);
-        return iconSortDESC;
+        let path = document.createElementNS(svgNS, "path");
+        path.setAttribute("d", "M176 352h-48V48a16 16 0 0 0 -16-16H80a16 16 0 0 0 -16 16v304H16c-14.2 0-21.4 17.2-11.3 27.3l80 96a16 16 0 0 0 22.6 0l80-96C197.4 369.3 190.2 352 176 352zm240-64H288a16 16 0 0 0 -16 16v32a16 16 0 0 0 16 16h56l-61.3 70.5A32 32 0 0 0 272 446.4V464a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0 -16-16h-56l61.3-70.5A32 32 0 0 0 432 321.6V304a16 16 0 0 0 -16-16zm31.1-85.4l-59.3-160A16 16 0 0 0 372.7 32h-41.4a16 16 0 0 0 -15.1 10.6l-59.3 160A16 16 0 0 0 272 224h24.8a16 16 0 0 0 15.2-11.1l4.4-12.9h71l4.4 12.9A16 16 0 0 0 407.2 224H432a16 16 0 0 0 15.1-21.4zM335.6 144L352 96l16.4 48z");
+        let svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("viewBox", "0 0 448 512");
+        svg.setAttribute("xmlns", svgNS);
+        svg.setAttribute("width", "16px");
+        svg.setAttribute("height", "16px");
+        svg.setAttribute('class', 'fa-arrow-down');
+        svg.setAttribute('fill', '#666666');
+        svg.style.display = 'none';
+        svg.style.padding = '2px';
+        svg.appendChild(path);
+        return svg;
     };
 
 }(jQuery));
